@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมฝึกแตะนิ้วหัวแม่มือ (รูปตัว O)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 15px; /* ลดขอบลงเล็กน้อยสำหรับมือถือ */
+        }
+        .info-panel {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin-bottom: 15px;
+            width: 90%; /* ให้กล่องข้อความพอดีจอมือถือ */
+            max-width: 500px;
+        }
+        h2 { margin: 0 0 10px 0; color: #333; font-size: 20px; }
+        .status { font-size: 20px; font-weight: bold; color: #555; margin: 5px; }
+        .target { color: #d9534f; }
+        .cycle { color: #4CAF50; font-size: 28px; }
+        .game-container { 
+            position: relative; 
+            display: inline-block; 
+            width: 100%; /* ให้คอนเทนเนอร์กว้างเต็มที่ */
+        }
+        /* --- ส่วนที่ปรับแก้ให้รองรับมือถือ (Responsive) --- */
+        canvas {
+            border: 4px solid #4CAF50;
+            border-radius: 10px;
+            transform: scaleX(-1); /* พลิกภาพให้เหมือนกระจก */
+            background-color: #ccc;
+            width: 100%; /* บังคับให้ความกว้างพอดีกับหน้าจอมือถือ */
+            max-width: 640px; /* ไม่ให้จอใหญ่เกินไปเวลาเปิดบนคอมพิวเตอร์ */
+            height: auto; /* รักษาสัดส่วนภาพไม่ให้บิดเบี้ยว */
+        }
+        #video { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="info-panel">
+        <h2>🖐️ ฝึกแยกการทำงานของนิ้ว (แตะรูปตัว O)</h2>
+        <div class="status">ให้นิ้วโป้งแตะ: <span id="targetName" class="target">นิ้วชี้</span></div>
+        <div class="status">จำนวนรอบที่ทำได้: <span id="cycleCount" class="cycle">0</span> รอบ</div>
+    </div>
+
+    <br>
+
+    <div class="game-container">
+        <video id="video" width="640" height="480" autoplay playsinline></video>
+        <canvas id="output_canvas" width="640" height="480"></canvas>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const targetNameEl = document.getElementById('targetName');
+        const cycleCountEl = document.getElementById('cycleCount');
+
+        // ตั้งค่าตัวแปรอ้างอิงจุดของนิ้ว
+        const fingerTips = [8, 12, 16, 20]; // ชี้, กลาง, นาง, ก้อย
+        const fingerNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
+        let currentTargetIdx = 0;
+        let cycleCount = 0;
+        let isTouching = false;
+
+        function calculateDistance(x1, y1, x2, y2) {
+            return Math.hypot(x2 - x1, y2 - y1);
+        }
+
+        function onResults(results) {
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                
+                // วาดเส้นมือ
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#FFFFFF', lineWidth: 2});
+                drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 1, radius: 3});
+
+                // ดึงพิกัดนิ้วโป้ง (4) และนิ้วเป้าหมายปัจจุบัน
+                const thumb = landmarks[4];
+                const target = landmarks[fingerTips[currentTargetIdx]];
+
+                const tx = thumb.x * canvasElement.width;
+                const ty = thumb.y * canvasElement.height;
+                const targetX = target.x * canvasElement.width;
+                const targetY = target.y * canvasElement.height;
+
+                // วาดวงกลมสีเหลืองบอกเป้าหมาย
+                canvasCtx.beginPath();
+                canvasCtx.arc(targetX, targetY, 25, 0, 2 * Math.PI);
+                canvasCtx.strokeStyle = 'yellow';
+                canvasCtx.lineWidth = 5;
+                canvasCtx.stroke();
+
+                const dist = calculateDistance(tx, ty, targetX, targetY);
+
+                // ถ้าระยะห่างน้อยกว่า 40 pixel ถือว่าแตะกันแล้ว
+                if (dist < 40) {
+                    // เปลี่ยนวงกลมเป็นสีเขียว
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(targetX, targetY, 25, 0, 2 * Math.PI);
+                    canvasCtx.fillStyle = 'rgba(0, 255, 0, 0.6)';
+                    canvasCtx.fill();
+
+                    if (!isTouching) {
+                        isTouching = true;
+                        currentTargetIdx++; // เลื่อนไปนิ้วถัดไป
+                        
+                        // ถ้าครบ 4 นิ้ว ให้เริ่มรอบใหม่และบวกคะแนน
+                        if (currentTargetIdx > 3) {
+                            currentTargetIdx = 0;
+                            cycleCount++;
+                            cycleCountEl.innerText = cycleCount;
+                        }
+                        targetNameEl.innerText = fingerNames[currentTargetIdx];
+                    }
+                } else {
+                    isTouching = false; // รีเซ็ตสถานะเมื่อปล่อยนิ้ว
+                }
+            }
+            canvasCtx.restore();
+        }
+
+        // ตั้งค่า MediaPipe
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+        
+        hands.setOptions({
+            maxNumHands: 1, // ตรวจจับมือเดียว
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7
+        });
+        hands.onResults(onResults);
+
+        // ตั้งค่ากล้อง (เพิ่ม playsinline ใน video tag ด้านบนเพื่อรองรับมือถือ)
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({image: videoElement});
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
+    </script>
+</body>
+</html>
