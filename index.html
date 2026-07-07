@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จีบ จีบ จุ้ม ขยุ้มหัวใจ</title>
+    <title>จับ จีบ จุ้ม ขยุ้มหัวใจ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -51,7 +51,8 @@
         button:active { transform: translateY(4px); box-shadow: none; }
         .btn-green { background-color: #4CAF50; border-bottom: 4px solid #2E8B57; }
         .btn-blue { background-color: #5DADE2; border-bottom: 4px solid #2874A6; }
-        .btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; } /* ปุ่มย้อนกลับ */
+        .btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; } 
+        .btn-red { background-color: #e74c3c; border-bottom: 4px solid #c0392b; } /* ปุ่มล้างคะแนน */
         
         input[type="text"] {
             font-family: 'Kanit', sans-serif;
@@ -102,7 +103,7 @@
             margin-top: 20px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-        .leaderboard h3 { margin-top: 0; color: #d87093; }
+        .leaderboard h3 { margin: 0; color: #d87093; }
         .score-item {
             font-size: 18px;
             padding: 5px 0;
@@ -119,14 +120,17 @@
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
     <div id="start-screen" class="screen active-screen">
-        <h1>จีบ จีบ จุ้ม<br>ขยุ้มหัวใจ ❤️</h1>
+        <h1>จับ จีบ จุ้ม<br>ขยุ้มหัวใจ ❤️</h1>
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
         <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
         <br>
         <button class="btn-green" onclick="startGame()">เริ่มเล่นเลย</button>
         
         <div class="leaderboard">
-            <h3>🏆 อันดับคะแนนสูงสุดที่เคยทำไว้</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3>🏆 อันดับคะแนนสูงสุดประจำสัปดาห์</h3>
+                <button class="btn-red" style="margin: 0; padding: 5px 10px; font-size: 14px; border-radius: 8px;" onclick="resetLeaderboard()">ล้างคะแนนทั้งหมด</button>
+            </div>
             <div id="leaderboard-list">
                 <p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>
             </div>
@@ -136,7 +140,7 @@
     <div id="game-screen" class="screen">
         <div class="info-bar">
             <button class="btn-gray" style="padding: 5px 15px; margin: 0;" onclick="goToStartScreen()">◀ กลับ</button>
-            <div class="timer">เวลา: <span id="timeDisplay">10</span> วิ</div>
+            <div class="timer">เวลา: <span id="timeDisplay">15</span> วิ</div>
             <div class="score">คะแนน: <span id="scoreDisplay">0</span></div>
         </div>
         
@@ -164,7 +168,7 @@
     <script>
         let playerName = "";
         let score = 0;
-        let timeLeft = 10;
+        let timeLeft = 15; 
         let gameActive = false;
         let timerInterval;
         let isSuccess = false; 
@@ -190,9 +194,11 @@
         }
         document.body.addEventListener('click', startBGM);
 
-        // --- NEW: ฟังก์ชันย้อนกลับหน้าลงทะเบียน ---
         function goToStartScreen() {
-            // ปิดระบบเกมทั้งหมด
+            if (gameActive && score > 0) {
+                saveScore(playerName, score);
+            }
+
             gameActive = false;
             clearInterval(timerInterval);
             camera.stop();
@@ -200,12 +206,10 @@
             isBGMPlaying = false;
             bgm.currentTime = 0;
             
-            // เปลี่ยนหน้าจอ
             gameScreen.classList.remove('active-screen');
             resultScreen.classList.remove('active-screen');
             startScreen.classList.add('active-screen');
             
-            // อัปเดตตารางคะแนนล่าสุด
             displayLeaderboard();
         }
 
@@ -213,18 +217,17 @@
             startBGM(); 
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
             
-            // สลับหน้าจอ
             startScreen.classList.remove('active-screen');
             resultScreen.classList.remove('active-screen');
             gameScreen.classList.add('active-screen');
 
-            // รีเซ็ตค่าตัวแปรใหม่ทั้งหมด
             gameActive = true;
             score = 0;
-            timeLeft = 10;
+            timeLeft = 15; 
             isSuccess = false;
             
             document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('timeDisplay').innerText = timeLeft;
             document.getElementById('feedbackText').innerText = "เตรียมตัว... ให้ทำมือซ้ายท่าจีบ มือขวาท่าแอล (L)";
             document.getElementById('feedbackText').style.color = "#d35400";
             
@@ -249,7 +252,6 @@
             bgm.currentTime = 0; 
             sndWrong.play(); 
             
-            // เซฟคะแนน
             if (score > 0) { 
                 saveScore(playerName, score);
             }
@@ -267,24 +269,68 @@
             }
         }
 
+        // --- NEW: ฟังก์ชันล้างคะแนนเก่าที่อายุเกิน 1 สัปดาห์ (7 วัน) ---
+        function cleanupOldScores() {
+            let history = JSON.parse(localStorage.getItem('elderlyGameScores')) || [];
+            const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // เวลา 7 วันในรูปแบบมิลลิวินาที
+            const now = Date.now();
+            
+            // กรองเอาไว้เฉพาะคะแนนที่บันทึกมาไม่เกิน 7 วัน
+            history = history.filter(item => (now - item.timestamp) < oneWeekInMs);
+            localStorage.setItem('elderlyGameScores', JSON.stringify(history));
+        }
+
+        // --- NEW: ฟังก์ชันกดปุ่มรีเซ็ตคะแนนด้วยตัวเอง ---
+        function resetLeaderboard() {
+            if(confirm("คุณต้องการล้างสถิติคะแนนทั้งหมดใช่หรือไม่?")) {
+                localStorage.removeItem('elderlyGameScores');
+                displayLeaderboard();
+            }
+        }
+
+        // --- UPDATE: ตรรกะเช็คชื่อซ้ำ และเก็บคะแนนที่มากที่สุด ---
         function saveScore(name, finalScore) {
             let history = JSON.parse(localStorage.getItem('elderlyGameScores')) || [];
-            history.push({ name: name, score: finalScore, date: new Date().toLocaleDateString('th-TH') });
+            
+            // หาว่าเคยมีชื่อนี้อยู่ในตารางคะแนนหรือยัง (ไม่สนอักษรตัวเล็กใหญ่)
+            let existingIndex = history.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
+            
+            if (existingIndex !== -1) {
+                // ถ้ามีชื่อซ้ำ: ตรวจสอบว่าคะแนนใหม่ "มากกว่า" คะแนนเดิมหรือไม่
+                if (finalScore > history[existingIndex].score) {
+                    history[existingIndex].score = finalScore; // แทนที่ด้วยคะแนนใหม่ที่มากกว่า
+                    history[existingIndex].timestamp = Date.now(); // อัปเดตวันเวลาล่าสุด
+                }
+                // ถ้าน้อยกว่า: ระบบจะไม่ทำอะไร (ทำให้ในตารางยังคงแสดงคะแนนเดิมที่มากที่สุดอยู่)
+            } else {
+                // ถ้าเป็นชื่อใหม่: เพิ่มข้อมูลเข้าไปปกติ
+                history.push({ name: name, score: finalScore, timestamp: Date.now() });
+            }
+            
+            // จัดเรียงลำดับจากคะแนนมากไปน้อย และดึงเอามาแค่ Top 5
             history.sort((a, b) => b.score - a.score);
             history = history.slice(0, 5);
             localStorage.setItem('elderlyGameScores', JSON.stringify(history));
         }
 
         function displayLeaderboard() {
+            cleanupOldScores(); // ล้างข้อมูลที่หมดอายุ (เกิน 1 อาทิตย์) ออกก่อนจัดเรียงแสดงผล
+            
             const listEl = document.getElementById('leaderboard-list');
             let history = JSON.parse(localStorage.getItem('elderlyGameScores')) || [];
-            if (history.length === 0) return;
+            
+            if (history.length === 0) {
+                listEl.innerHTML = `<p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>`;
+                return;
+            }
             
             let html = "";
             history.forEach((item, index) => {
                 let medal = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `${index + 1}. `;
+                // แปลง Timestamp กลับมาเป็นวันที่ภาษาไทย
+                let dateStr = new Date(item.timestamp).toLocaleDateString('th-TH');
                 html += `<div class="score-item">
-                            <span>${medal}${item.name} <small style="color:#999;">(${item.date})</small></span>
+                            <span>${medal}${item.name} <small style="color:#999;">(${dateStr})</small></span>
                             <span style="font-weight:bold; color:#e74c3c;">${item.score} ⭐</span>
                          </div>`;
             });
