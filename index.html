@@ -51,6 +51,7 @@
         button:active { transform: translateY(4px); box-shadow: none; }
         .btn-green { background-color: #4CAF50; border-bottom: 4px solid #2E8B57; }
         .btn-blue { background-color: #5DADE2; border-bottom: 4px solid #2874A6; }
+        .btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; } /* ปุ่มย้อนกลับ */
         
         input[type="text"] {
             font-family: 'Kanit', sans-serif;
@@ -66,7 +67,8 @@
         .info-bar {
             display: flex;
             justify-content: space-between;
-            font-size: 24px;
+            align-items: center;
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 10px;
         }
@@ -133,6 +135,7 @@
 
     <div id="game-screen" class="screen">
         <div class="info-bar">
+            <button class="btn-gray" style="padding: 5px 15px; margin: 0;" onclick="goToStartScreen()">◀ กลับ</button>
             <div class="timer">เวลา: <span id="timeDisplay">10</span> วิ</div>
             <div class="score">คะแนน: <span id="scoreDisplay">0</span></div>
         </div>
@@ -152,7 +155,10 @@
         <h2>คุณ <span id="resName"></span> ทำได้</h2>
         <h1 style="font-size: 60px; color: #e74c3c; margin: 10px 0;"><span id="resScore"></span> ⭐</h1>
         <p id="resFeedback"></p>
-        <button class="btn-blue" onclick="location.reload()">เล่นใหม่อีกครั้ง</button>
+        
+        <button class="btn-blue" onclick="startGame()">เล่นใหม่อีกครั้ง (ชื่อเดิม)</button>
+        <br>
+        <button class="btn-gray" onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
     </div>
 
     <script>
@@ -184,17 +190,45 @@
         }
         document.body.addEventListener('click', startBGM);
 
+        // --- NEW: ฟังก์ชันย้อนกลับหน้าลงทะเบียน ---
+        function goToStartScreen() {
+            // ปิดระบบเกมทั้งหมด
+            gameActive = false;
+            clearInterval(timerInterval);
+            camera.stop();
+            bgm.pause();
+            isBGMPlaying = false;
+            bgm.currentTime = 0;
+            
+            // เปลี่ยนหน้าจอ
+            gameScreen.classList.remove('active-screen');
+            resultScreen.classList.remove('active-screen');
+            startScreen.classList.add('active-screen');
+            
+            // อัปเดตตารางคะแนนล่าสุด
+            displayLeaderboard();
+        }
+
         function startGame() {
             startBGM(); 
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+            
+            // สลับหน้าจอ
             startScreen.classList.remove('active-screen');
+            resultScreen.classList.remove('active-screen');
             gameScreen.classList.add('active-screen');
 
+            // รีเซ็ตค่าตัวแปรใหม่ทั้งหมด
             gameActive = true;
             score = 0;
             timeLeft = 10;
-            document.getElementById('scoreDisplay').innerText = score;
+            isSuccess = false;
             
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('feedbackText').innerText = "เตรียมตัว... ให้ทำมือซ้ายท่าจีบ มือขวาท่าแอล (L)";
+            document.getElementById('feedbackText').style.color = "#d35400";
+            
+            clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
             camera.start();
         }
@@ -215,7 +249,10 @@
             bgm.currentTime = 0; 
             sndWrong.play(); 
             
-            saveScore(playerName, score);
+            // เซฟคะแนน
+            if (score > 0) { 
+                saveScore(playerName, score);
+            }
             
             gameScreen.classList.remove('active-screen');
             resultScreen.classList.add('active-screen');
@@ -254,21 +291,17 @@
             listEl.innerHTML = html;
         }
 
-        // --- ฟังก์ชันคำนวณระยะห่างระหว่างจุด ---
         function getDistance(p1, p2) {
             return Math.hypot(p2.x - p1.x, p2.y - p1.y);
         }
 
-        // --- NEW: ฟังก์ชันเช็คว่า "นิ้วกางออก" หรือไม่ ---
-        // (ถ้าระยะปลายนิ้วถึงข้อมือ มากกว่า ระยะข้อต่อนิ้วถึงข้อมือ ถือว่านิ้วกำลังเหยียด/กางออก)
         function isFingerExtended(landmarks, tipIdx, pipIdx) {
             const wrist = landmarks[0];
             const tip = landmarks[tipIdx];
-            const pip = landmarks[pipIdx]; // ข้อต่อกลางนิ้ว
+            const pip = landmarks[pipIdx]; 
             return getDistance(tip, wrist) > getDistance(pip, wrist);
         }
 
-        // --- ตรรกะ MediaPipe (ตรวจความถูกต้องทุกนิ้ว) ---
         function onResults(results) {
             if (!gameActive) return;
 
@@ -284,20 +317,16 @@
                     drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#FFFFFF', lineWidth: 2});
                     drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 1, radius: 3});
 
-                    // ระยะห่างนิ้วโป้ง (4) กับ นิ้วชี้ (8)
                     const thumbIndexDist = getDistance(landmarks[4], landmarks[8]);
 
-                    // เช็คสถานะการเหยียดนิ้ว ชี้ กลาง นาง ก้อย
                     const indexExt = isFingerExtended(landmarks, 8, 6);
                     const middleExt = isFingerExtended(landmarks, 12, 10);
                     const ringExt = isFingerExtended(landmarks, 16, 14);
                     const pinkyExt = isFingerExtended(landmarks, 20, 18);
 
-                    // 1. เงื่อนไขท่าจีบที่สมบูรณ์: โป้ง+ชี้ แตะกัน (น้อยกว่า 0.05) && กลาง นาง ก้อย ต้องเหยียดออก
                     if (thumbIndexDist < 0.05 && middleExt && ringExt && pinkyExt) {
                         hasJib = true;
                     } 
-                    // 2. เงื่อนไขท่าแอลที่สมบูรณ์: โป้ง+ชี้ ห่างกัน (มากกว่า 0.1) && ชี้เหยียดออก && กลาง นาง ก้อย พับเก็บ(กำ)
                     else if (thumbIndexDist > 0.1 && indexExt && !middleExt && !ringExt && !pinkyExt) {
                         hasL = true;
                     }
@@ -313,7 +342,7 @@
                         sndCorrect.currentTime = 0;
                         sndCorrect.play(); 
                         
-                        timeLeft += 3; // โบนัสเพิ่มเวลาเมื่อทำถูก
+                        timeLeft += 3; 
                     }
                 } else {
                     isSuccess = false; 
