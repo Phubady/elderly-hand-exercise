@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จับ จีบ จุ้ม ขยุ้มหัวใจ</title>
+    <title>จีบ จีบ จุ้ม ขยุ้มหัวใจ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -52,7 +52,7 @@
         .btn-green { background-color: #4CAF50; border-bottom: 4px solid #2E8B57; }
         .btn-blue { background-color: #5DADE2; border-bottom: 4px solid #2874A6; }
         .btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; } 
-        .btn-red { background-color: #e74c3c; border-bottom: 4px solid #c0392b; } /* ปุ่มล้างคะแนน */
+        .btn-red { background-color: #e74c3c; border-bottom: 4px solid #c0392b; }
         
         input[type="text"] {
             font-family: 'Kanit', sans-serif;
@@ -75,7 +75,7 @@
         }
         .timer { color: #e74c3c; }
         .score { color: #27ae60; }
-        .feedback { font-size: 20px; color: #d35400; min-height: 30px; margin-bottom: 10px;}
+        .feedback { font-size: 20px; color: #d35400; min-height: 30px; margin-bottom: 10px; font-weight: bold;}
         
         .ref-image {
             width: 100%;
@@ -120,7 +120,7 @@
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
     <div id="start-screen" class="screen active-screen">
-        <h1>จับ จีบ จุ้ม<br>ขยุ้มหัวใจ ❤️</h1>
+        <h1>จีบ จีบ จุ้ม<br>ขยุ้มหัวใจ ❤️</h1>
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
         <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
         <br>
@@ -140,13 +140,13 @@
     <div id="game-screen" class="screen">
         <div class="info-bar">
             <button class="btn-gray" style="padding: 5px 15px; margin: 0;" onclick="goToStartScreen()">◀ กลับ</button>
-            <div class="timer">เวลา: <span id="timeDisplay">15</span> วิ</div>
+            <div class="timer">เวลา: <span id="timeDisplay">30</span> วิ</div>
             <div class="score">คะแนน: <span id="scoreDisplay">0</span></div>
         </div>
         
         <img src="ref_image.jpg" alt="ภาพตัวอย่างท่าทาง" class="ref-image" onerror="this.style.display='none'">
         
-        <div class="feedback" id="feedbackText">เตรียมตัว... ให้ทำมือซ้ายท่าจีบ มือขวาท่าแอล (L)</div>
+        <div class="feedback" id="feedbackText">ยกมือขึ้นมาทั้ง 2 ข้าง จีบ 1 ข้าง แอล 1 ข้าง</div>
 
         <div class="game-container">
             <video id="video" width="640" height="480" autoplay playsinline></video>
@@ -168,11 +168,14 @@
     <script>
         let playerName = "";
         let score = 0;
-        let timeLeft = 15; 
+        let timeLeft = 30; // ปรับเวลาเริ่มต้นเป็น 30 วินาทีให้พอดีกับการค้างท่า
         let gameActive = false;
         let timerInterval;
-        let isSuccess = false; 
         let isBGMPlaying = false; 
+        
+        // ตัวแปรสำหรับระบบสลับข้างและค้างเวลา
+        let lastValidState = null; 
+        let holdStartTime = null;
 
         const startScreen = document.getElementById('start-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -186,6 +189,7 @@
 
         window.onload = function() { displayLeaderboard(); };
 
+        // เปิดเสียงพื้นหลัง
         function startBGM() {
             if (!isBGMPlaying) {
                 bgm.volume = 0.2; 
@@ -223,12 +227,13 @@
 
             gameActive = true;
             score = 0;
-            timeLeft = 15; 
-            isSuccess = false;
+            timeLeft = 30; 
+            lastValidState = null; // รีเซ็ตสถานะสลับข้าง
+            holdStartTime = null;  // รีเซ็ตเวลานับค้างท่า
             
             document.getElementById('scoreDisplay').innerText = score;
             document.getElementById('timeDisplay').innerText = timeLeft;
-            document.getElementById('feedbackText').innerText = "เตรียมตัว... ให้ทำมือซ้ายท่าจีบ มือขวาท่าแอล (L)";
+            document.getElementById('feedbackText').innerText = "เตรียมตัว... ยกมือซ้าย-ขวา จีบ 1 ข้าง แอล 1 ข้าง";
             document.getElementById('feedbackText').style.color = "#d35400";
             
             clearInterval(timerInterval);
@@ -263,24 +268,21 @@
             document.getElementById('resScore').innerText = score;
             
             if(score > 30) {
-                document.getElementById('resFeedback').innerText = "ยอดเยี่ยมมาก! กล้ามเนื้อมือของคุณแข็งแรงและว่องไวมากค่ะ";
+                document.getElementById('resFeedback').innerText = "สุดยอดมากค่ะ! ทั้งสลับข้างและค้างท่าได้เป๊ะ สมองแข็งแรงมากๆ ค่ะ";
             } else {
-                document.getElementById('resFeedback').innerText = "พยายามได้ดีมากค่ะ ค่อยๆ ฝึกไปทุกวันนะคะ คะแนนจะเพิ่มขึ้นแน่นอน";
+                document.getElementById('resFeedback').innerText = "พยายามได้ดีมากค่ะ ท่าสลับฝั่งและค้างเวลาต้องใช้สมาธิสูง ค่อยๆ ฝึกต่อนะคะ";
             }
         }
 
-        // --- NEW: ฟังก์ชันล้างคะแนนเก่าที่อายุเกิน 1 สัปดาห์ (7 วัน) ---
         function cleanupOldScores() {
             let history = JSON.parse(localStorage.getItem('elderlyGameScores')) || [];
-            const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // เวลา 7 วันในรูปแบบมิลลิวินาที
+            const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; 
             const now = Date.now();
             
-            // กรองเอาไว้เฉพาะคะแนนที่บันทึกมาไม่เกิน 7 วัน
             history = history.filter(item => (now - item.timestamp) < oneWeekInMs);
             localStorage.setItem('elderlyGameScores', JSON.stringify(history));
         }
 
-        // --- NEW: ฟังก์ชันกดปุ่มรีเซ็ตคะแนนด้วยตัวเอง ---
         function resetLeaderboard() {
             if(confirm("คุณต้องการล้างสถิติคะแนนทั้งหมดใช่หรือไม่?")) {
                 localStorage.removeItem('elderlyGameScores');
@@ -288,33 +290,26 @@
             }
         }
 
-        // --- UPDATE: ตรรกะเช็คชื่อซ้ำ และเก็บคะแนนที่มากที่สุด ---
         function saveScore(name, finalScore) {
             let history = JSON.parse(localStorage.getItem('elderlyGameScores')) || [];
-            
-            // หาว่าเคยมีชื่อนี้อยู่ในตารางคะแนนหรือยัง (ไม่สนอักษรตัวเล็กใหญ่)
             let existingIndex = history.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
             
             if (existingIndex !== -1) {
-                // ถ้ามีชื่อซ้ำ: ตรวจสอบว่าคะแนนใหม่ "มากกว่า" คะแนนเดิมหรือไม่
                 if (finalScore > history[existingIndex].score) {
-                    history[existingIndex].score = finalScore; // แทนที่ด้วยคะแนนใหม่ที่มากกว่า
-                    history[existingIndex].timestamp = Date.now(); // อัปเดตวันเวลาล่าสุด
+                    history[existingIndex].score = finalScore; 
+                    history[existingIndex].timestamp = Date.now(); 
                 }
-                // ถ้าน้อยกว่า: ระบบจะไม่ทำอะไร (ทำให้ในตารางยังคงแสดงคะแนนเดิมที่มากที่สุดอยู่)
             } else {
-                // ถ้าเป็นชื่อใหม่: เพิ่มข้อมูลเข้าไปปกติ
                 history.push({ name: name, score: finalScore, timestamp: Date.now() });
             }
             
-            // จัดเรียงลำดับจากคะแนนมากไปน้อย และดึงเอามาแค่ Top 5
             history.sort((a, b) => b.score - a.score);
             history = history.slice(0, 5);
             localStorage.setItem('elderlyGameScores', JSON.stringify(history));
         }
 
         function displayLeaderboard() {
-            cleanupOldScores(); // ล้างข้อมูลที่หมดอายุ (เกิน 1 อาทิตย์) ออกก่อนจัดเรียงแสดงผล
+            cleanupOldScores(); 
             
             const listEl = document.getElementById('leaderboard-list');
             let history = JSON.parse(localStorage.getItem('elderlyGameScores')) || [];
@@ -327,7 +322,6 @@
             let html = "";
             history.forEach((item, index) => {
                 let medal = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `${index + 1}. `;
-                // แปลง Timestamp กลับมาเป็นวันที่ภาษาไทย
                 let dateStr = new Date(item.timestamp).toLocaleDateString('th-TH');
                 html += `<div class="score-item">
                             <span>${medal}${item.name} <small style="color:#999;">(${dateStr})</small></span>
@@ -341,6 +335,7 @@
             return Math.hypot(p2.x - p1.x, p2.y - p1.y);
         }
 
+        // ตรวจสอบว่านิ้วเหยียดตรงหรือไม่
         function isFingerExtended(landmarks, tipIdx, pipIdx) {
             const wrist = landmarks[0];
             const tip = landmarks[tipIdx];
@@ -355,47 +350,97 @@
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-            let hasJib = false;
-            let hasL = false;
+            let handsDetected = results.multiHandLandmarks ? results.multiHandLandmarks.length : 0;
 
-            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                for (const landmarks of results.multiHandLandmarks) {
+            if (handsDetected >= 2) {
+                let handData = [];
+
+                for (let i = 0; i < 2; i++) {
+                    const landmarks = results.multiHandLandmarks[i];
                     drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#FFFFFF', lineWidth: 2});
                     drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 1, radius: 3});
 
                     const thumbIndexDist = getDistance(landmarks[4], landmarks[8]);
-
                     const indexExt = isFingerExtended(landmarks, 8, 6);
                     const middleExt = isFingerExtended(landmarks, 12, 10);
                     const ringExt = isFingerExtended(landmarks, 16, 14);
                     const pinkyExt = isFingerExtended(landmarks, 20, 18);
 
+                    let gesture = "None";
                     if (thumbIndexDist < 0.05 && middleExt && ringExt && pinkyExt) {
-                        hasJib = true;
+                        gesture = "Jib";
                     } 
                     else if (thumbIndexDist > 0.1 && indexExt && !middleExt && !ringExt && !pinkyExt) {
-                        hasL = true;
+                        gesture = "L";
                     }
+
+                    handData.push({
+                        x: landmarks[0].x, 
+                        gesture: gesture
+                    });
                 }
 
-                if (hasJib && hasL && results.multiHandLandmarks.length >= 2) {
-                    if (!isSuccess) {
-                        isSuccess = true;
-                        score += 10;
-                        document.getElementById('scoreDisplay').innerText = score;
-                        document.getElementById('feedbackText').innerText = "ถูกต้องเป๊ะมาก! เก่งมากค่ะ ทำต่อไป";
-                        document.getElementById('feedbackText').style.color = "#27ae60";
-                        sndCorrect.currentTime = 0;
-                        sndCorrect.play(); 
+                // เรียงจากซ้ายจอไปขวาจอ
+                handData.sort((a, b) => a.x - b.x);
+
+                let leftHandGest = handData[0].gesture;
+                let rightHandGest = handData[1].gesture;
+                let currentState = null;
+
+                if (leftHandGest === "Jib" && rightHandGest === "L") {
+                    currentState = "Jib-L";
+                } else if (leftHandGest === "L" && rightHandGest === "Jib") {
+                    currentState = "L-Jib";
+                }
+
+                // ตรรกะผสานร่าง: เช็คท่าทาง + เช็คการสลับข้าง + นับเวลาค้าง 3 วิ
+                if (currentState) {
+                    if (currentState === lastValidState) {
+                        // ถ้าทำท่าถูกต้อง แต่ดันเป็นฝั่งเดิมที่เพิ่งได้คะแนนไป (ยังไม่สลับฝั่ง)
+                        holdStartTime = null; // รีเซ็ตตัวนับค้างท่า
+                        document.getElementById('feedbackText').innerText = "ทำได้ดี! ตอนนี้สลับมืออีกข้าง เพื่อรับคะแนน";
+                        document.getElementById('feedbackText').style.color = "#2980b9"; // สีฟ้า
+                    } else {
+                        // ทำท่าถูกต้อง และเป็นฝั่งใหม่ที่พร้อมจะได้คะแนน -> เริ่มนับเวลาค้าง 3 วิ
+                        if (!holdStartTime) {
+                            holdStartTime = Date.now(); // เริ่มจับเวลาค้างท่า ณ วินาทีนี้
+                        }
                         
-                        timeLeft += 3; 
+                        let holdTime = Date.now() - holdStartTime;
+                        let secondsLeft = 3 - Math.floor(holdTime / 1000);
+                        
+                        if (holdTime >= 3000) { // ค้างครบ 3 วินาทีเต็ม
+                            score += 10;
+                            timeLeft += 3; // แถมเวลาให้
+                            document.getElementById('scoreDisplay').innerText = score;
+                            document.getElementById('feedbackText').innerText = "ยอดเยี่ยมมาก! สลับข้างต่อไปเลย!";
+                            document.getElementById('feedbackText').style.color = "#27ae60"; // สีเขียว
+                            
+                            sndCorrect.currentTime = 0;
+                            sndCorrect.play(); 
+                            
+                            lastValidState = currentState; // ล็อคฝั่งนี้ไว้ ต้องสลับไปทำอีกฝั่งถึงจะได้แต้มใหม่
+                            holdStartTime = null; // รีเซ็ตตัวนับค้างท่าเพื่อรอรอบถัดไป
+                        } else {
+                            // อยู่ในระหว่างค้างท่า ให้แสดงเลขนับถอยหลัง
+                            document.getElementById('feedbackText').innerText = `สลับฝั่งถูกต้อง! ค้างท่านี้ไว้... ${secondsLeft} วินาที`;
+                            document.getElementById('feedbackText').style.color = "#e67e22"; // สีส้ม
+                        }
                     }
                 } else {
-                    isSuccess = false; 
-                    document.getElementById('feedbackText').innerText = "ระวังนิ้วอื่นด้วย! จีบหนึ่งข้าง ทำตัวแอลหนึ่งข้าง";
+                    // ทำท่าเบี้ยว, ทำท่าซ้ำกันทั้งสองมือ หรือนิ้วไม่ตรงเงื่อนไข
+                    holdStartTime = null; 
+                    document.getElementById('feedbackText').innerText = "ทำให้ถูกต้อง จีบ 1 ข้าง แอล 1 ข้าง";
                     document.getElementById('feedbackText').style.color = "#d35400";
                 }
+
+            } else {
+                // หากมือหายไปจากจอ หรือยกขึ้นมาไม่ครบ 2 มือ
+                holdStartTime = null; 
+                document.getElementById('feedbackText').innerText = "ยกมือขึ้นมาทั้ง 2 ข้าง เพื่อเล่นเกม!";
+                document.getElementById('feedbackText').style.color = "#c0392b";
             }
+            
             canvasCtx.restore();
         }
 
