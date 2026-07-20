@@ -252,10 +252,10 @@
         <div class="instruction-box">
             <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 20px;">เป้าหมายภารกิจ:</p>
             <ul>
-                <li>ทำท่าสลับ <b>จีบ - แอล</b> ให้ครบ <b>10 ครั้ง</b> ภายในเวลา <b>30 วินาที</b></li>
+                <li>ทำสะสมให้ได้ครบ <b>10 คะแนน</b> ภายในเวลา <b>30 วินาที</b></li>
                 <li>ยกมือทั้ง 2 ข้าง: มือหนึ่งทำท่า <b>"จีบ"</b> อีกมือทำท่า <b>"แอล (L)"</b></li>
-                <li><b>ค้างท่าไว้ 3 วินาที</b> เพื่อให้นับเป็น 1 ครั้ง (10 คะแนน)</li>
-                <li>เมื่อนับสำเร็จแล้ว ต้อง<b>สลับข้างมือ</b>เพื่อสะสมครั้งถัดไป</li>
+                <li><b>ค้างท่าไว้ 1 วินาที</b> เพื่อให้นับเป็น 1 คะแนน</li>
+                <li>เมื่อได้คะแนนแล้ว ต้อง<b>สลับข้างมือ</b>เพื่อสะสมคะแนนถัดไป</li>
             </ul>
         </div>
         
@@ -491,12 +491,11 @@
             const resTitle = document.getElementById('resTitle');
             if (completedTarget) {
                 resTitle.innerText = "ภารกิจสำเร็จ! 🎉";
-                document.getElementById('resFeedback').innerText = "สุดยอดมากค่ะ! ทำครบ 10 ครั้งได้ทันเวลา สมองแข็งแรงมากๆ ค่ะ!";
+                document.getElementById('resFeedback').innerText = "สุดยอดมากค่ะ! ครบ 10 คะแนนทันเวลา สมองแข็งแรงมากๆ ค่ะ!";
             } else {
                 resTitle.innerText = "หมดเวลา! ⏰";
-                const countDone = Math.floor(score / 10);
-                if (score >= 50) {
-                    document.getElementById('resFeedback').innerText = `ทำได้ดีมากค่ะ! ทำได้ทั้งหมด ${countDone} ครั้ง พยายามอีกนิดจะครบ 10 ครั้งแล้วค่ะ`;
+                if (score >= 5) {
+                    document.getElementById('resFeedback').innerText = `ทำได้ดีมากค่ะ! สะสมได้ทั้งหมด ${score} คะแนน พยายามอีกนิดจะครบ 10 คะแนนแล้วค่ะ`;
                 } else {
                     document.getElementById('resFeedback').innerText = "พยายามได้ดีมากค่ะ ท่าสลับฝั่งและค้างเวลาต้องใช้สมาธิสูง ค่อยๆ ฝึกต่อนะคะ";
                 }
@@ -631,10 +630,10 @@
                         }
                         
                         let holdTime = Date.now() - holdStartTime;
-                        let secondsLeft = 3 - Math.floor(holdTime / 1000);
+                        let remainingSec = ((1000 - holdTime) / 1000).toFixed(1);
                         
-                        if (holdTime >= 3000) { 
-                            score += 10;
+                        if (holdTime >= 1000) { // หน่วงเวลา 1 วินาที (1,000 มิลลิวินาที)
+                            score += 1; // เพิ่มทีละ 1 คะแนน
                             document.getElementById('scoreDisplay').innerText = score;
                             
                             sndCorrect.currentTime = 0;
@@ -643,16 +642,16 @@
                             lastValidState = currentState; 
                             holdStartTime = null; 
 
-                            if (score >= 100) {
+                            if (score >= 10) { // ครบ 10 คะแนน ชนะเกม
                                 endGame(true); 
                                 canvasCtx.restore();
                                 return;
                             } else {
-                                document.getElementById('feedbackText').innerText = `ยอดเยี่ยมมาก! ได้ ${score/10}/10 ครั้ง สลับข้างต่อไปเลย!`;
+                                document.getElementById('feedbackText').innerText = `ยอดเยี่ยมมาก! ได้ ${score}/10 คะแนน สลับข้างต่อไปเลย!`;
                                 document.getElementById('feedbackText').style.color = "#27ae60"; 
                             }
                         } else {
-                            document.getElementById('feedbackText').innerText = `สลับฝั่งถูกต้อง! ค้างท่านี้ไว้... ${secondsLeft} วินาที`;
+                            document.getElementById('feedbackText').innerText = `สลับฝั่งถูกต้อง! ค้างท่านี้ไว้อีก... ${remainingSec} วินาที`;
                             document.getElementById('feedbackText').style.color = "#e67e22"; 
                         }
                     }
