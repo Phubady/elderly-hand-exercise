@@ -36,24 +36,41 @@
         h1 { color: #d87093; font-size: 32px; text-shadow: 1px 1px 2px #fff; }
         h2 { color: #cd5c5c; }
         
-        button {
+        button, .badge-btn {
             font-family: 'Kanit', sans-serif;
-            font-size: 22px;
-            padding: 10px 30px;
-            margin: 10px;
+            font-size: 20px;
+            padding: 10px 24px;
+            margin: 5px;
             border: none;
             border-radius: 15px;
             cursor: pointer;
             color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
             transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
         }
-        button:active { transform: translateY(4px); box-shadow: none; }
+        button:active { transform: translateY(3px); box-shadow: none; }
         .btn-green { background-color: #4CAF50; border-bottom: 4px solid #2E8B57; }
         .btn-blue { background-color: #5DADE2; border-bottom: 4px solid #2874A6; }
         .btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; } 
         .btn-red { background-color: #e74c3c; border-bottom: 4px solid #c0392b; }
+        .btn-yellow { background-color: #f39c12; border-bottom: 4px solid #d35400; font-size: 18px; }
         
+        /* สไตล์ของเวลา รูปแบบคล้ายปุ่ม */
+        .badge-timer {
+            background-color: #ffffff;
+            color: #e74c3c;
+            border: 3px solid #e74c3c;
+            font-weight: bold;
+            font-size: 20px;
+            height: 42px;
+            padding: 0 16px;
+            cursor: default;
+        }
+
         input[type="text"] {
             font-family: 'Kanit', sans-serif;
             font-size: 20px;
@@ -69,29 +86,102 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
-        .timer { color: #e74c3c; }
-        .score { color: #27ae60; }
-        .feedback { font-size: 20px; color: #d35400; min-height: 30px; margin-bottom: 10px; font-weight: bold;}
         
-        .ref-image {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 3px dashed #d87093;
+        .action-btns-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .action-btns-group button {
+            padding: 6px 16px;
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            height: 42px;
         }
 
-        .game-container { position: relative; width: 100%; }
+        .feedback { font-size: 19px; color: #d35400; min-height: 28px; margin-bottom: 10px; font-weight: bold;}
+        
+        /* การแสดงผลตัวอย่างท่าทางด้วย อีโมจิขนาดใหญ่ */
+        .example-box {
+            background: #ffffff;
+            border: 2px dashed #d87093;
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #5a3d31;
+            margin-bottom: 8px;
+        }
+        .emoji-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #fff5f8;
+            border: 2px solid #ffc0cb;
+            border-radius: 15px;
+            padding: 8px 10px;
+        }
+        .emoji-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .emoji-card .emoji {
+            font-size: 60px;
+            line-height: 1.1;
+        }
+        .emoji-card .label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #d87093;
+            margin-top: 4px;
+        }
+        .emoji-divider {
+            width: 2px;
+            height: 65px;
+            background-color: #ffb6c1;
+            border-radius: 2px;
+        }
+
+        /* ส่วนแสดงกล้อง และ คะแนนลอยอยู่มุมขวาบนของจอภาพ */
+        .game-container { 
+            position: relative; 
+            width: 100%; 
+        }
+        
+        .score-hud {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #f39c12;
+            border-radius: 15px;
+            padding: 6px 16px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #d35400;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         canvas {
             width: 100%;
             height: auto;
             border-radius: 15px;
             transform: scaleX(-1);
             background-color: #000;
+            display: block;
         }
         #video { display: none; }
         
@@ -111,6 +201,24 @@
             display: flex;
             justify-content: space-between;
         }
+
+        .instruction-box {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            text-align: left;
+            font-size: 18px;
+            line-height: 1.6;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .instruction-box ul {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+        }
+        .instruction-box li {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -119,12 +227,13 @@
     <audio id="snd-correct" src="correct.mp3"></audio>
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
+    <!-- หน้าแรก: กรอกชื่อ / ตารางคะแนน -->
     <div id="start-screen" class="screen active-screen">
         <h1>จีบ จีบ จุ้ม<br>ขยุ้มหัวใจ ❤️</h1>
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
         <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
         <br>
-        <button class="btn-green" onclick="startGame()">เริ่มเล่นเลย</button>
+        <button class="btn-green" onclick="goToInstructionScreen()">ถัดไป ➔</button>
         
         <div class="leaderboard">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -137,25 +246,83 @@
         </div>
     </div>
 
-    <div id="game-screen" class="screen">
-        <div class="info-bar">
-            <button class="btn-gray" style="padding: 5px 15px; margin: 0;" onclick="goToStartScreen()">◀ กลับ</button>
-            <div class="timer">เวลา: <span id="timeDisplay">30</span> วิ</div>
-            <div class="score">คะแนน: <span id="scoreDisplay">0</span></div>
+    <!-- หน้าคำอธิบายก่อนเริ่มเกม -->
+    <div id="instruction-screen" class="screen">
+        <h1>คำอธิบายการเล่น 🎯</h1>
+        <div class="instruction-box">
+            <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 20px;">เป้าหมายภารกิจ:</p>
+            <ul>
+                <li>ทำท่าสลับ <b>จีบ - แอล</b> ให้ครบ <b>10 ครั้ง</b> ภายในเวลา <b>30 วินาที</b></li>
+                <li>ยกมือทั้ง 2 ข้าง: มือหนึ่งทำท่า <b>"จีบ"</b> อีกมือทำท่า <b>"แอล (L)"</b></li>
+                <li><b>ค้างท่าไว้ 3 วินาที</b> เพื่อให้นับเป็น 1 ครั้ง (10 คะแนน)</li>
+                <li>เมื่อนับสำเร็จแล้ว ต้อง<b>สลับข้างมือ</b>เพื่อสะสมครั้งถัดไป</li>
+            </ul>
         </div>
         
-        <img src="ref_image.jpg" alt="ภาพตัวอย่างท่าทาง" class="ref-image" onerror="this.style.display='none'">
+        <!-- ตัวอย่างท่าทางในหน้าอธิบาย -->
+        <div class="emoji-container">
+            <div class="emoji-card">
+                <span class="emoji">👌</span>
+                <span class="label">มือซ้าย (จีบ)</span>
+            </div>
+            <div class="emoji-divider"></div>
+            <div class="emoji-card">
+                <span class="emoji">👆</span>
+                <span class="label">มือขวา (ตัว L)</span>
+            </div>
+        </div>
+        <br>
+        <button class="btn-green" onclick="startGame()">พร้อมแล้ว เริ่มเล่นเลย!</button>
+        <br>
+        <button class="btn-gray" style="font-size: 16px; padding: 5px 15px;" onclick="goToStartScreen()">◀ ย้อนกลับ</button>
+    </div>
+
+    <!-- หน้าเล่นเกม -->
+    <div id="game-screen" class="screen">
+        <div class="info-bar">
+            <!-- ซ้าย: เวลา ดีไซน์รูปทรงคล้ายปุ่ม -->
+            <div class="badge-btn badge-timer">
+                ⏱️ เวลา: <span id="timeDisplay" style="margin-left: 6px;">30</span> วิ
+            </div>
+            
+            <!-- ขวา: ปุ่มพัก และ ปุ่มกลับ -->
+            <div class="action-btns-group">
+                <button class="btn-yellow" id="pauseBtn" onclick="togglePause()">⏸️ พัก</button>
+                <button class="btn-red" id="backBtn" onclick="goToStartScreen()" title="กลับหน้าหลัก">✖ กลับ</button>
+            </div>
+        </div>
+        
+        <!-- ส่วนแสดงตัวอย่างท่าทางแบบอีโมจิขนาดใหญ่ -->
+        <div class="example-box">
+            <div class="example-title">จงทำมือซ้ายเป็นท่าจีบ มือขวาเป็นท่าตัวแอล (L) ดังรูป</div>
+            <div class="emoji-container">
+                <div class="emoji-card">
+                    <span class="emoji">👌</span>
+                    <span class="label">มือซ้าย (จีบ)</span>
+                </div>
+                <div class="emoji-divider"></div>
+                <div class="emoji-card">
+                    <span class="emoji">👆</span>
+                    <span class="label">มือขวา (ตัว L)</span>
+                </div>
+            </div>
+        </div>
         
         <div class="feedback" id="feedbackText">ยกมือขึ้นมาทั้ง 2 ข้าง จีบ 1 ข้าง แอล 1 ข้าง</div>
 
+        <!-- หน้าจอกล้อง โดยย้ายคะแนนมาอยู่มุมขวาบนของจอภาพผู้เล่น -->
         <div class="game-container">
+            <div class="score-hud">
+                ⭐ <span id="scoreDisplay">0</span> คะแนน
+            </div>
             <video id="video" width="640" height="480" autoplay playsinline></video>
             <canvas id="output_canvas" width="640" height="480"></canvas>
         </div>
     </div>
 
+    <!-- หน้าสรุปผล -->
     <div id="result-screen" class="screen">
-        <h1>หมดเวลา! ⏰</h1>
+        <h1 id="resTitle">หมดเวลา! ⏰</h1>
         <h2>คุณ <span id="resName"></span> ทำได้</h2>
         <h1 style="font-size: 60px; color: #e74c3c; margin: 10px 0;"><span id="resScore"></span> ⭐</h1>
         <p id="resFeedback"></p>
@@ -168,16 +335,17 @@
     <script>
         let playerName = "";
         let score = 0;
-        let timeLeft = 30; // ปรับเวลาเริ่มต้นเป็น 30 วินาทีให้พอดีกับการค้างท่า
+        let timeLeft = 30; 
         let gameActive = false;
+        let isPaused = false; 
         let timerInterval;
         let isBGMPlaying = false; 
         
-        // ตัวแปรสำหรับระบบสลับข้างและค้างเวลา
         let lastValidState = null; 
         let holdStartTime = null;
 
         const startScreen = document.getElementById('start-screen');
+        const instructionScreen = document.getElementById('instruction-screen');
         const gameScreen = document.getElementById('game-screen');
         const resultScreen = document.getElementById('result-screen');
         const videoElement = document.getElementById('video');
@@ -189,7 +357,6 @@
 
         window.onload = function() { displayLeaderboard(); };
 
-        // เปิดเสียงพื้นหลัง
         function startBGM() {
             if (!isBGMPlaying) {
                 bgm.volume = 0.2; 
@@ -204,12 +371,14 @@
             }
 
             gameActive = false;
+            isPaused = false;
             clearInterval(timerInterval);
             camera.stop();
             bgm.pause();
             isBGMPlaying = false;
             bgm.currentTime = 0;
             
+            instructionScreen.classList.remove('active-screen');
             gameScreen.classList.remove('active-screen');
             resultScreen.classList.remove('active-screen');
             startScreen.classList.add('active-screen');
@@ -217,19 +386,36 @@
             displayLeaderboard();
         }
 
+        function goToInstructionScreen() {
+            startBGM();
+            playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+            
+            startScreen.classList.remove('active-screen');
+            resultScreen.classList.remove('active-screen');
+            gameScreen.classList.remove('active-screen');
+            instructionScreen.classList.add('active-screen');
+        }
+
         function startGame() {
             startBGM(); 
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
             
             startScreen.classList.remove('active-screen');
+            instructionScreen.classList.remove('active-screen');
             resultScreen.classList.remove('active-screen');
             gameScreen.classList.add('active-screen');
 
             gameActive = true;
+            isPaused = false; 
+            
+            const pauseBtn = document.getElementById('pauseBtn');
+            pauseBtn.innerText = "⏸️ พัก";
+            pauseBtn.className = "btn-yellow";
+
             score = 0;
             timeLeft = 30; 
-            lastValidState = null; // รีเซ็ตสถานะสลับข้าง
-            holdStartTime = null;  // รีเซ็ตเวลานับค้างท่า
+            lastValidState = null; 
+            holdStartTime = null;  
             
             document.getElementById('scoreDisplay').innerText = score;
             document.getElementById('timeDisplay').innerText = timeLeft;
@@ -241,21 +427,56 @@
             camera.start();
         }
 
-        function updateTimer() {
+        function togglePause() {
             if (!gameActive) return;
-            timeLeft--;
-            document.getElementById('timeDisplay').innerText = timeLeft;
-            if (timeLeft <= 0) endGame();
+
+            const pauseBtn = document.getElementById('pauseBtn');
+            const feedbackEl = document.getElementById('feedbackText');
+
+            if (!isPaused) {
+                isPaused = true;
+                clearInterval(timerInterval);
+                if (isBGMPlaying) bgm.pause();
+                
+                pauseBtn.innerText = "▶️ เล่นต่อ";
+                pauseBtn.className = "btn-green";
+                feedbackEl.innerText = "⏸️ หยุดพักเกมชั่วคราว... กด 'เล่นต่อ' เพื่อเล่นต่อ";
+                feedbackEl.style.color = "#7f8c8d";
+                holdStartTime = null; 
+            } else {
+                isPaused = false;
+                timerInterval = setInterval(updateTimer, 1000);
+                if (isBGMPlaying) bgm.play().catch(e => console.log(e));
+
+                pauseBtn.innerText = "⏸️ พัก";
+                pauseBtn.className = "btn-yellow";
+                feedbackEl.innerText = "พร้อมแล้ว! ยกมือขึ้นมาทั้ง 2 ข้าง จีบ 1 ข้าง แอล 1 ข้าง";
+                feedbackEl.style.color = "#d35400";
+                holdStartTime = null;
+            }
         }
 
-        function endGame() {
+        function updateTimer() {
+            if (!gameActive || isPaused) return;
+            timeLeft--;
+            document.getElementById('timeDisplay').innerText = timeLeft;
+            if (timeLeft <= 0) endGame(false);
+        }
+
+        function endGame(completedTarget = false) {
             gameActive = false;
+            isPaused = false;
             clearInterval(timerInterval);
             camera.stop();
             bgm.pause();
             isBGMPlaying = false;
             bgm.currentTime = 0; 
-            sndWrong.play(); 
+            
+            if (completedTarget) {
+                sndCorrect.play();
+            } else {
+                sndWrong.play(); 
+            }
             
             if (score > 0) { 
                 saveScore(playerName, score);
@@ -267,10 +488,18 @@
             document.getElementById('resName').innerText = playerName;
             document.getElementById('resScore').innerText = score;
             
-            if(score > 30) {
-                document.getElementById('resFeedback').innerText = "สุดยอดมากค่ะ! ทั้งสลับข้างและค้างท่าได้เป๊ะ สมองแข็งแรงมากๆ ค่ะ";
+            const resTitle = document.getElementById('resTitle');
+            if (completedTarget) {
+                resTitle.innerText = "ภารกิจสำเร็จ! 🎉";
+                document.getElementById('resFeedback').innerText = "สุดยอดมากค่ะ! ทำครบ 10 ครั้งได้ทันเวลา สมองแข็งแรงมากๆ ค่ะ!";
             } else {
-                document.getElementById('resFeedback').innerText = "พยายามได้ดีมากค่ะ ท่าสลับฝั่งและค้างเวลาต้องใช้สมาธิสูง ค่อยๆ ฝึกต่อนะคะ";
+                resTitle.innerText = "หมดเวลา! ⏰";
+                const countDone = Math.floor(score / 10);
+                if (score >= 50) {
+                    document.getElementById('resFeedback').innerText = `ทำได้ดีมากค่ะ! ทำได้ทั้งหมด ${countDone} ครั้ง พยายามอีกนิดจะครบ 10 ครั้งแล้วค่ะ`;
+                } else {
+                    document.getElementById('resFeedback').innerText = "พยายามได้ดีมากค่ะ ท่าสลับฝั่งและค้างเวลาต้องใช้สมาธิสูง ค่อยๆ ฝึกต่อนะคะ";
+                }
             }
         }
 
@@ -335,7 +564,6 @@
             return Math.hypot(p2.x - p1.x, p2.y - p1.y);
         }
 
-        // ตรวจสอบว่านิ้วเหยียดตรงหรือไม่
         function isFingerExtended(landmarks, tipIdx, pipIdx) {
             const wrist = landmarks[0];
             const tip = landmarks[tipIdx];
@@ -344,7 +572,7 @@
         }
 
         function onResults(results) {
-            if (!gameActive) return;
+            if (!gameActive || isPaused) return;
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -380,7 +608,6 @@
                     });
                 }
 
-                // เรียงจากซ้ายจอไปขวาจอ
                 handData.sort((a, b) => a.x - b.x);
 
                 let leftHandGest = handData[0].gesture;
@@ -393,49 +620,49 @@
                     currentState = "L-Jib";
                 }
 
-                // ตรรกะผสานร่าง: เช็คท่าทาง + เช็คการสลับข้าง + นับเวลาค้าง 3 วิ
                 if (currentState) {
                     if (currentState === lastValidState) {
-                        // ถ้าทำท่าถูกต้อง แต่ดันเป็นฝั่งเดิมที่เพิ่งได้คะแนนไป (ยังไม่สลับฝั่ง)
-                        holdStartTime = null; // รีเซ็ตตัวนับค้างท่า
+                        holdStartTime = null; 
                         document.getElementById('feedbackText').innerText = "ทำได้ดี! ตอนนี้สลับมืออีกข้าง เพื่อรับคะแนน";
-                        document.getElementById('feedbackText').style.color = "#2980b9"; // สีฟ้า
+                        document.getElementById('feedbackText').style.color = "#2980b9"; 
                     } else {
-                        // ทำท่าถูกต้อง และเป็นฝั่งใหม่ที่พร้อมจะได้คะแนน -> เริ่มนับเวลาค้าง 3 วิ
                         if (!holdStartTime) {
-                            holdStartTime = Date.now(); // เริ่มจับเวลาค้างท่า ณ วินาทีนี้
+                            holdStartTime = Date.now(); 
                         }
                         
                         let holdTime = Date.now() - holdStartTime;
                         let secondsLeft = 3 - Math.floor(holdTime / 1000);
                         
-                        if (holdTime >= 3000) { // ค้างครบ 3 วินาทีเต็ม
+                        if (holdTime >= 3000) { 
                             score += 10;
-                            timeLeft += 3; // แถมเวลาให้
                             document.getElementById('scoreDisplay').innerText = score;
-                            document.getElementById('feedbackText').innerText = "ยอดเยี่ยมมาก! สลับข้างต่อไปเลย!";
-                            document.getElementById('feedbackText').style.color = "#27ae60"; // สีเขียว
                             
                             sndCorrect.currentTime = 0;
                             sndCorrect.play(); 
                             
-                            lastValidState = currentState; // ล็อคฝั่งนี้ไว้ ต้องสลับไปทำอีกฝั่งถึงจะได้แต้มใหม่
-                            holdStartTime = null; // รีเซ็ตตัวนับค้างท่าเพื่อรอรอบถัดไป
+                            lastValidState = currentState; 
+                            holdStartTime = null; 
+
+                            if (score >= 100) {
+                                endGame(true); 
+                                canvasCtx.restore();
+                                return;
+                            } else {
+                                document.getElementById('feedbackText').innerText = `ยอดเยี่ยมมาก! ได้ ${score/10}/10 ครั้ง สลับข้างต่อไปเลย!`;
+                                document.getElementById('feedbackText').style.color = "#27ae60"; 
+                            }
                         } else {
-                            // อยู่ในระหว่างค้างท่า ให้แสดงเลขนับถอยหลัง
                             document.getElementById('feedbackText').innerText = `สลับฝั่งถูกต้อง! ค้างท่านี้ไว้... ${secondsLeft} วินาที`;
-                            document.getElementById('feedbackText').style.color = "#e67e22"; // สีส้ม
+                            document.getElementById('feedbackText').style.color = "#e67e22"; 
                         }
                     }
                 } else {
-                    // ทำท่าเบี้ยว, ทำท่าซ้ำกันทั้งสองมือ หรือนิ้วไม่ตรงเงื่อนไข
                     holdStartTime = null; 
                     document.getElementById('feedbackText').innerText = "ทำให้ถูกต้อง จีบ 1 ข้าง แอล 1 ข้าง";
                     document.getElementById('feedbackText').style.color = "#d35400";
                 }
 
             } else {
-                // หากมือหายไปจากจอ หรือยกขึ้นมาไม่ครบ 2 มือ
                 holdStartTime = null; 
                 document.getElementById('feedbackText').innerText = "ยกมือขึ้นมาทั้ง 2 ข้าง เพื่อเล่นเกม!";
                 document.getElementById('feedbackText').style.color = "#c0392b";
