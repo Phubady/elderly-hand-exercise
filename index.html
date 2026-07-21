@@ -80,25 +80,25 @@
         .level-badge {
             background: #d87093;
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
-            padding: 4px 16px;
+            padding: 4px 12px;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .action-btns-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
         .action-btns-group button {
-            padding: 6px 16px;
+            padding: 6px 12px;
             margin: 0;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 12px;
-            height: 42px;
+            height: 38px;
         }
 
         .feedback { 
@@ -143,22 +143,22 @@
             flex: 1;
         }
         .emoji-card .emoji {
-            font-size: 50px;
+            font-size: 48px;
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 55px;
+            height: 52px;
         }
         .emoji-card .label {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #d87093;
             margin-top: 4px;
         }
         .emoji-divider {
             width: 2px;
-            height: 60px;
+            height: 55px;
             background-color: #ffb6c1;
             border-radius: 2px;
         }
@@ -272,13 +272,13 @@
             margin-bottom: 6px;
         }
 
-        /* ปรับขนาด Emoji นิ้วก้อยให้ใช้หน่วย 1em เท่ากับ Emoji ปกติเป๊ะๆ */
+        /* ตกแต่ง SVG อีโมจินิ้วก้อย ให้เป็นสไตล์ 3D Glossy เหมือนกับระบบ */
         .pinky-emoji-styled {
             width: 1em;
             height: 1em;
             display: inline-block;
-            vertical-align: middle;
-            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.15));
+            vertical-align: -0.1em;
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2));
         }
     </style>
 </head>
@@ -288,18 +288,40 @@
     <audio id="snd-correct" src="correct.mp3"></audio>
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
-    <!-- SVG นิ้วก้อย ปรับสเกลสัดส่วนให้พอดีกับ กรอบ 1em ของอีโมจิมาตรฐาน -->
+    <!-- SVG ดีไซน์ 3D Glossy Emoji นิ้วก้อย -->
     <svg style="display:none;">
+        <defs>
+            <linearGradient id="emojiSkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFE082"/>
+                <stop offset="45%" stop-color="#FFCA28"/>
+                <stop offset="100%" stop-color="#FF8F00"/>
+            </linearGradient>
+            <linearGradient id="emojiStrokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFB300"/>
+                <stop offset="100%" stop-color="#E65100"/>
+            </linearGradient>
+            <linearGradient id="emojiHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
         <g id="svg-pinky-emoji">
             <svg viewBox="0 0 100 100" width="100%" height="100%">
-                <!-- ฝ่ามือ -->
-                <path d="M 22 45 C 18 45, 18 85, 28 88 L 68 88 C 78 88, 78 48, 68 48 Z" fill="#FFCC4D"/>
-                <!-- นิ้วพับ -->
-                <path d="M 26 50 C 26 40, 38 40, 38 50 C 38 40, 50 40, 50 50 C 50 40, 62 40, 62 50" fill="#FFCC4D" stroke="#E69D00" stroke-width="4" stroke-linecap="round"/>
-                <!-- นิ้วโป้งพับ -->
-                <path d="M 20 62 C 10 62, 12 78, 28 75" fill="#FFCC4D" stroke="#E69D00" stroke-width="4" stroke-linecap="round"/>
-                <!-- นิ้วก้อยชูขึ้น -->
-                <rect x="61" y="8" width="18" height="50" rx="9" fill="#FFCC4D" stroke="#E69D00" stroke-width="3.5"/>
+                <!-- นิ้วก้อยตั้งชูขึ้น -->
+                <rect x="63" y="10" width="20" height="52" rx="10" fill="url(#emojiSkinGrad)" stroke="url(#emojiStrokeGrad)" stroke-width="2.5"/>
+                <!-- แสงสะท้อนบนนิ้วก้อย -->
+                <rect x="66" y="14" width="6" height="32" rx="3" fill="url(#emojiHighlight)"/>
+                
+                <!-- ฐานฝ่ามือขยุ้ม -->
+                <path d="M 20 48 C 16 48, 16 88, 28 90 L 72 90 C 82 90, 83 50, 72 48 Z" fill="url(#emojiSkinGrad)" stroke="url(#emojiStrokeGrad)" stroke-width="2.5"/>
+                
+                <!-- นิ้วชี้/กลาง/นาง พับลงมา -->
+                <path d="M 26 52 C 26 42, 38 42, 38 52 C 38 42, 50 42, 50 52 C 50 42, 62 42, 62 52" fill="none" stroke="url(#emojiStrokeGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M 26 52 C 26 43, 38 43, 38 52 C 38 43, 50 43, 50 52 C 50 43, 62 43, 62 52" fill="none" stroke="#FFE082" stroke-width="1.8" stroke-linecap="round"/>
+
+                <!-- นิ้วโป้งพับขวาง -->
+                <path d="M 18 64 C 10 64, 12 80, 32 76" fill="none" stroke="url(#emojiStrokeGrad)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 18 64 C 10 64, 12 80, 32 76" fill="none" stroke="#FFE082" stroke-width="2" stroke-linecap="round"/>
             </svg>
         </g>
     </svg>
@@ -360,8 +382,9 @@
         <div class="info-bar">
             <div id="levelBadge" class="level-badge">ด่านที่ 1/7</div>
             <div class="action-btns-group">
+                <button class="btn-blue" onclick="toggleHandSwap()" title="กดหากระบบตรวจสลับมือกัน">🔄 สลับซ้าย-ขวา</button>
                 <button class="btn-yellow" id="pauseBtn" onclick="togglePause()">⏸️ พัก</button>
-                <button class="btn-red" id="backBtn" onclick="goToStartScreen()" title="กลับหน้าหลัก">✖ กลับ</button>
+                <button class="btn-red" id="backBtn" onclick="goToStartScreen()" title="กลับหน้าหลัก">✖</button>
             </div>
         </div>
         
@@ -518,6 +541,7 @@
         let timerInterval;
         let isBGMPlaying = false; 
         let cameraInitialized = false;
+        let invertHandDetection = false; // ตัวแปรสำหรับสลับซ้าย-ขวาฉุกเฉิน
         
         let lastScoreTime = 0;
 
@@ -549,6 +573,12 @@
             }
         }
         document.body.addEventListener('click', startBGM);
+
+        function toggleHandSwap() {
+            invertHandDetection = !invertHandDetection;
+            const statusMsg = invertHandDetection ? "🔄 สลับโหมดมือเรียบร้อย!" : "🔄 กลับสู่โหมดมือปกติเรียบร้อย!";
+            alert(statusMsg);
+        }
 
         function showScreen(targetScreen) {
             startScreen.classList.remove('active-screen');
@@ -835,6 +865,33 @@
             }
         }
 
+        function drawHandLabelOnCanvas(landmarks, handText, isRightHand) {
+            const wrist = landmarks[0];
+            const wx = wrist.x * canvasElement.width;
+            const wy = wrist.y * canvasElement.height;
+
+            canvasCtx.save();
+            canvasCtx.translate(wx, wy);
+            canvasCtx.scale(-1, 1); // สลับกลับเพื่อให้ข้อความอ่านได้ปกติบน Canvas ที่ติด scaleX(-1)
+
+            canvasCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
+            canvasCtx.beginPath();
+            if (canvasCtx.roundRect) {
+                canvasCtx.roundRect(-45, -35, 90, 28, 8);
+            } else {
+                canvasCtx.rect(-45, -35, 90, 28);
+            }
+            canvasCtx.fill();
+
+            canvasCtx.fillStyle = isRightHand ? "#4EAEFF" : "#FF6B6B";
+            canvasCtx.font = "bold 15px Kanit, sans-serif";
+            canvasCtx.textAlign = "center";
+            canvasCtx.textBaseline = "middle";
+            canvasCtx.fillText(handText, 0, -21);
+
+            canvasCtx.restore();
+        }
+
         function onResults(results) {
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -872,27 +929,13 @@
                     let detectedHandLabel = "";
 
                     for (let i = 0; i < results.multiHandedness.length; i++) {
-                        // ปรับแก้ Selfie Mirroring: MediaPipe 'Left' = มือขวาจริงของผู้เล่น
-                        let rawLabel = results.multiHandedness[i].label; 
-                        let realPhysicalHand = (rawLabel === "Left") ? "Right" : "Left";
+                        let rawLabel = results.multiHandedness[i].label; // MediaPipe: "Right" = มือขวาจริง, "Left" = มือซ้ายจริง
+                        let realPhysicalHand = invertHandDetection ? (rawLabel === "Left" ? "Right" : "Left") : rawLabel;
                         detectedHandLabel = realPhysicalHand === "Right" ? "มือขวา" : "มือซ้าย";
 
-                        // วาดป้ายชื่อมือระบุบน Canvas ให้ผู้เล่นเห็นแบบ Real-time
+                        // วาดป้ายชื่อมือลอยตรงข้อมือบน Canvas
                         const lm = results.multiHandLandmarks[i];
-                        const wrist = lm[0];
-                        const screenX = (1 - wrist.x) * canvasElement.width;
-                        const screenY = wrist.y * canvasElement.height;
-
-                        canvasCtx.save();
-                        canvasCtx.translate(canvasElement.width, 0);
-                        canvasCtx.scale(-1, 1);
-                        canvasCtx.fillStyle = "rgba(0, 0, 0, 0.65)";
-                        canvasCtx.fillRect(screenX - 45, screenY + 10, 90, 28);
-                        canvasCtx.fillStyle = realPhysicalHand === "Right" ? "#4EAEFF" : "#FF6B6B";
-                        canvasCtx.font = "bold 16px Kanit";
-                        canvasCtx.textAlign = "center";
-                        canvasCtx.fillText(realPhysicalHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", screenX, screenY + 30);
-                        canvasCtx.restore();
+                        drawHandLabelOnCanvas(lm, realPhysicalHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", realPhysicalHand === "Right");
 
                         if (realPhysicalHand === targetSide) {
                             targetHandLM = results.multiHandLandmarks[i];
@@ -1020,23 +1063,9 @@
                         for (let i = 0; i < results.multiHandLandmarks.length; i++) {
                             const landmarks = results.multiHandLandmarks[i];
                             let rawLabel = results.multiHandedness[i].label; 
-                            let realHand = (rawLabel === "Left") ? "Right" : "Left"; // Mirroring Fix
+                            let realHand = invertHandDetection ? (rawLabel === "Left" ? "Right" : "Left") : rawLabel;
 
-                            // วาดป้ายชื่อมือระบุบน Canvas สำหรับด่านสองมือ
-                            const wrist = landmarks[0];
-                            const screenX = (1 - wrist.x) * canvasElement.width;
-                            const screenY = wrist.y * canvasElement.height;
-
-                            canvasCtx.save();
-                            canvasCtx.translate(canvasElement.width, 0);
-                            canvasCtx.scale(-1, 1);
-                            canvasCtx.fillStyle = "rgba(0, 0, 0, 0.65)";
-                            canvasCtx.fillRect(screenX - 45, screenY + 10, 90, 28);
-                            canvasCtx.fillStyle = realHand === "Right" ? "#4EAEFF" : "#FF6B6B";
-                            canvasCtx.font = "bold 16px Kanit";
-                            canvasCtx.textAlign = "center";
-                            canvasCtx.fillText(realHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", screenX, screenY + 30);
-                            canvasCtx.restore();
+                            drawHandLabelOnCanvas(landmarks, realHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", realHand === "Right");
 
                             const thumbIndexDist = getDistance(landmarks[4], landmarks[8]);
                             const indexExt  = isFingerExtended(landmarks, 8, 6);
