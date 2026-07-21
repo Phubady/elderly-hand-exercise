@@ -272,7 +272,6 @@
             margin-bottom: 6px;
         }
 
-        /* SVG นิ้วก้อยเดี่ยว */
         .pinky-svg-icon {
             width: 48px;
             height: 48px;
@@ -286,24 +285,20 @@
     <audio id="snd-correct" src="correct.mp3"></audio>
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
-    <!-- HTML Template ของ SVG นิ้วก้อยล้วน (ไม่ติดโป้ง) -->
     <svg style="display:none;">
         <g id="svg-pinky-only">
             <svg viewBox="0 0 100 100" width="50" height="50">
-                <!-- ฝ่ามือและนิ้วที่พับไว้ -->
                 <path d="M 25 45 L 75 45 L 75 85 C 75 92, 25 92, 25 85 Z" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
                 <path d="M 28 45 C 28 35, 40 35, 40 45" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
                 <path d="M 40 45 C 40 35, 52 35, 52 45" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
                 <path d="M 52 45 C 52 35, 64 35, 64 45" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <!-- นิ้วโป้งพับเก็บ -->
                 <path d="M 25 60 C 15 60, 20 75, 30 75" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <!-- นิ้วก้อยชูขึ้นตรงๆ -->
                 <path d="M 64 45 L 64 15 C 64 8, 76 8, 76 15 L 76 45" fill="#ffd1dc" stroke="#d87093" stroke-width="4"/>
             </svg>
         </g>
     </svg>
 
-    <!-- หน้าแรก: กรอกชื่อ / ตารางคะแนน -->
+    <!-- หน้าแรก -->
     <div id="start-screen" class="screen active-screen">
         <h1>จีบ จีบ จุ้ม<br>ขยุ้มหัวใจ ❤️</h1>
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
@@ -322,7 +317,7 @@
         </div>
     </div>
 
-    <!-- หน้าคำอธิบายประจำแต่ละด่าน -->
+    <!-- หน้าคำอธิบายด่าน -->
     <div id="level-instruction-screen" class="screen">
         <h1 id="instLevelTitle">คำอธิบายด่านที่ 1</h1>
         <div class="instruction-box">
@@ -396,7 +391,7 @@
         </div>
     </div>
 
-    <!-- หน้าแสดงความยินดีเมื่อผ่านด่าน -->
+    <!-- หน้าผ่านด่าน -->
     <div id="level-clear-screen" class="screen">
         <h1>🎉 ผ่านด่านแล้ว!</h1>
         <h2 id="clearLevelName" style="color: #27ae60;">คุณผ่านด่านเรียบร้อย</h2>
@@ -412,7 +407,7 @@
         <button class="btn-gray" onclick="goToStartScreen()">ย้อนกลับหน้าแรก</button>
     </div>
 
-    <!-- หน้าสรุปผลลัพธ์สุดท้าย -->
+    <!-- หน้าสรุปผลลัพธ์ -->
     <div id="result-screen" class="screen">
         <h1 id="resTitle">หมดเวลา! ⏰</h1>
         <h2>คุณ <span id="resName"></span> ทำได้ทั้งหมด</h2>
@@ -427,7 +422,6 @@
     <script>
         const PINKY_SVG_HTML = `<use href="#svg-pinky-only"/>`;
 
-        // รายละเอียดด่านทั้ง 7 ด่าน
         const LEVELS = [
             {
                 level: 1,
@@ -453,25 +447,25 @@
             },
             {
                 level: 3,
-                title: "ด่านที่ 3: มือขวา ชูโป้ง ➔ เก็บนิ้ว ➔ ชูก้อย",
-                desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง ➔ เก็บนิ้วโป้งลง (กำมือ) ➔ แล้วชูเฉพาะนิ้วก้อย นับเป็น 1 คะแนน",
+                title: "ด่านที่ 3: มือขวา ชูโป้ง ➔ สลับชูก้อย",
+                desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง แล้วสลับไป ชูนิ้วก้อย นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👍",
                 labelLeft: "1. ชูโป้ง",
                 emojiRight: `<svg viewBox="0 0 100 100" class="pinky-svg-icon">${PINKY_SVG_HTML}</svg>`,
-                labelRight: "2. เก็บนิ้ว ➔ 3. ชูก้อย"
+                labelRight: "2. สลับชูก้อย"
             },
             {
                 level: 4,
-                title: "ด่านที่ 4: มือซ้าย ชูโป้ง ➔ เก็บนิ้ว ➔ ชูก้อย",
-                desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง ➔ เก็บนิ้วโป้งลง (กำมือ) ➔ แล้วชูเฉพาะนิ้วก้อย นับเป็น 1 คะแนน",
+                title: "ด่านที่ 4: มือซ้าย ชูโป้ง ➔ สลับชูก้อย",
+                desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง แล้วสลับไป ชูนิ้วก้อย นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👍",
                 labelLeft: "1. ชูโป้ง",
                 emojiRight: `<svg viewBox="0 0 100 100" class="pinky-svg-icon">${PINKY_SVG_HTML}</svg>`,
-                labelRight: "2. เก็บนิ้ว ➔ 3. ชูก้อย"
+                labelRight: "2. สลับชูก้อย"
             },
             {
                 level: 5,
@@ -519,11 +513,9 @@
         let isBGMPlaying = false; 
         let cameraInitialized = false;
         
-        let lastScoreTime = 0; // ควบคุม Feedback ค้างไว้ 1 วินาที
+        let lastScoreTime = 0;
 
-        // สถานะท่าทาง
         let tapSeqStep = 0;           
-        let thumbPinkyStep = 0; // สำหรับด่าน 3,4: 0 = รอโป้ง, 1 = รอเก็บนิ้ว(กำมือ), 2 = รอก้อย
         let toggleSubState = null;     
         let lastValidState = null;     
         let holdStartTime = null;      
@@ -608,17 +600,14 @@
             startBGM(); 
             const lvl = LEVELS[currentLevelIdx];
 
-            // รีเซ็ตค่าด่าน
             levelScore = 0;
             timeLeft = lvl.timeLimit;
             tapSeqStep = 0;
-            thumbPinkyStep = 0;
             toggleSubState = null;
             lastValidState = null;
             holdStartTime = null;
             lastScoreTime = 0;
 
-            // ตั้งค่าหน้า UI เกม
             document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/7`;
             document.getElementById('gameEmojiLeft').innerHTML = lvl.emojiLeft;
             document.getElementById('gameLabelLeft').innerText = lvl.labelLeft;
@@ -638,7 +627,6 @@
 
             showScreen(gameScreen);
 
-            // เริ่มเปิดกล้องครั้งแรก (ถ้ายังไม่ได้เปิด)
             if (!cameraInitialized) {
                 try {
                     await camera.start();
@@ -841,13 +829,11 @@
             }
         }
 
-        // ประมวลผลภาพจากกล้อง
         function onResults(results) {
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-            // ถ้าไม่ได้อยู่ในสภาวะเล่น ให้วาดแค่กล้องแล้วกดข้ามการประมวลผลท่าทาง
             if (!gameActive || isPaused) {
                 canvasCtx.restore();
                 return;
@@ -874,11 +860,13 @@
                 // ==================== ด่าน 1 ถึง 6 (ใช้มือเดียว) ====================
                 if (currentLevelIdx >= 0 && currentLevelIdx <= 5) {
                     const targetSide = (currentLevelIdx === 0 || currentLevelIdx === 2 || currentLevelIdx === 4) ? "Right" : "Left";
-                    const targetSideTh = targetSide === "Right" ? "มือขวาจริง" : "มือซ้ายจริง";
+                    const targetSideTh = targetSide === "Right" ? "มือขวา" : "มือซ้าย";
 
                     let targetHandLM = null;
                     for (let i = 0; i < results.multiHandedness.length; i++) {
-                        if (results.multiHandedness[i].label === targetSide) {
+                        // ปรับแก้ Invert สำหรับกล้องหน้า: MediaPipe Left = Real Right Hand
+                        let realHandLabel = (results.multiHandedness[i].label === "Left") ? "Right" : "Left";
+                        if (realHandLabel === targetSide) {
                             targetHandLM = results.multiHandLandmarks[i];
                             break;
                         }
@@ -923,7 +911,7 @@
                             }
                         }
 
-                        // --- ด่าน 3 & 4: ชูโป้ง ➔ เก็บนิ้วโป้งลง (กำมือ) ➔ ชูก้อย ---
+                        // --- ด่าน 3 & 4: ชูโป้ง ➔ สลับชูก้อย ---
                         else if (currentLevelIdx === 2 || currentLevelIdx === 3) {
                             const thumbExt = isFingerExtended(targetHandLM, 4, 2);
                             const indexExt = isFingerExtended(targetHandLM, 8, 6);
@@ -933,32 +921,23 @@
 
                             const isThumbOnly = thumbExt && !indexExt && !middleExt && !ringExt && !pinkyExt;
                             const isPinkyOnly = pinkyExt && !indexExt && !middleExt && !ringExt && !thumbExt;
-                            const isStowed = !thumbExt && !pinkyExt; // เก็บนิ้วโป้งและก้อยแล้ว
 
-                            if (thumbPinkyStep === 0) {
+                            if (toggleSubState === "Thumb") {
                                 if (!isJustScored) {
-                                    document.getElementById('feedbackText').innerText = `👉 ขั้นที่ 1: ใช้ ${targetSideTh} "ชูนิ้วโป้ง" 👍`;
-                                    document.getElementById('feedbackText').style.color = "#d35400";
-                                }
-                                if (isThumbOnly) {
-                                    thumbPinkyStep = 1; // ไปขั้นตอนเก็บนิ้ว
-                                }
-                            } else if (thumbPinkyStep === 1) {
-                                if (!isJustScored) {
-                                    document.getElementById('feedbackText').innerText = `👉 ขั้นที่ 2: ดีมาก! ตอนนี้ "เก็บนิ้วโป้งลง" (กำมือ)`;
-                                    document.getElementById('feedbackText').style.color = "#e67e22";
-                                }
-                                if (isStowed) {
-                                    thumbPinkyStep = 2; // ไปขั้นตอนชูก้อย
-                                }
-                            } else if (thumbPinkyStep === 2) {
-                                if (!isJustScored) {
-                                    document.getElementById('feedbackText').innerText = `👉 ขั้นที่ 3: เก่งมาก! ต่อไป "ชูเฉพาะนิ้วก้อย"`;
+                                    document.getElementById('feedbackText').innerText = `👉 ชูโป้งแล้ว! ตอนนี้สลับไป "ชูนิ้วก้อย" 🤙`;
                                     document.getElementById('feedbackText').style.color = "#2980b9";
                                 }
                                 if (isPinkyOnly) {
-                                    thumbPinkyStep = 0; // วนรอบใหม่
+                                    toggleSubState = null;
                                     addPoint();
+                                }
+                            } else {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = `👉 ใช้ ${targetSideTh} "ชูนิ้วโป้ง" 👍`;
+                                    document.getElementById('feedbackText').style.color = "#d35400";
+                                }
+                                if (isThumbOnly) {
+                                    toggleSubState = "Thumb";
                                 }
                             }
                         }
@@ -1003,10 +982,13 @@
                 // ==================== ด่าน 7 (สองมือ จีบ-แอล สลับฝั่ง) ====================
                 else if (currentLevelIdx === 6) {
                     if (results.multiHandLandmarks.length >= 2) {
-                        let handData = [];
+                        let leftHandGest = "None";
+                        let rightHandGest = "None";
 
-                        for (let i = 0; i < 2; i++) {
+                        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
                             const landmarks = results.multiHandLandmarks[i];
+                            let realHand = (results.multiHandedness[i].label === "Left") ? "Right" : "Left";
+
                             const thumbIndexDist = getDistance(landmarks[4], landmarks[8]);
                             const indexExt  = isFingerExtended(landmarks, 8, 6);
                             const middleExt = isFingerExtended(landmarks, 12, 10);
@@ -1020,15 +1002,11 @@
                                 gesture = "L";
                             }
 
-                            handData.push({ x: landmarks[0].x, gesture: gesture });
+                            if (realHand === "Left") leftHandGest = gesture;
+                            if (realHand === "Right") rightHandGest = gesture;
                         }
 
-                        handData.sort((a, b) => a.x - b.x);
-
-                        let leftHandGest = handData[0].gesture;
-                        let rightHandGest = handData[1].gesture;
                         let currentState = null;
-
                         if (leftHandGest === "Jib" && rightHandGest === "L") {
                             currentState = "Jib-L";
                         } else if (leftHandGest === "L" && rightHandGest === "Jib") {
