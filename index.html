@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จีบ จีบ จุ้ม ขยุ้มหัวใจ</title>
+    <title>จับ จีบ จุ้ม ขยุ้มหัวใจ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -103,7 +103,19 @@
             height: 42px;
         }
 
-        .feedback { font-size: 19px; color: #d35400; min-height: 28px; margin-bottom: 10px; font-weight: bold;}
+        /* ปรับปรุงกล่อง Feedback ให้ชัดเจน อ่านง่ายขึ้น */
+        .feedback { 
+            font-size: 20px; 
+            color: #d35400; 
+            min-height: 32px; 
+            margin-bottom: 10px; 
+            font-weight: bold;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 6px 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
         
         /* การแสดงผลตัวอย่างท่าทางด้วย อีโมจิขนาดใหญ่ */
         .example-box {
@@ -155,6 +167,30 @@
         .game-container { 
             position: relative; 
             width: 100%; 
+        }
+
+        /* ข้อความ "ถูกต้อง!" ตรงกลางข้างบนกล้อง */
+        .correct-overlay {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            z-index: 20;
+            background: #2ecc71;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            padding: 6px 28px;
+            border-radius: 50px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            border: 3px solid #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .correct-overlay.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
         }
         
         .score-hud {
@@ -254,7 +290,7 @@
             <ul>
                 <li>ทำสะสมให้ได้ครบ <b>10 คะแนน</b> ภายในเวลา <b>30 วินาที</b></li>
                 <li>ยกมือทั้ง 2 ข้าง: มือหนึ่งทำท่า <b>"จีบ"</b> อีกมือทำท่า <b>"แอล (L)"</b></li>
-                <li><b>ค้างท่าไว้ 1 วินาที</b> เพื่อให้นับเป็น 1 คะแนน</li>
+                <li><b>ค้างท่าไว้ 0.5 วินาที</b> เพื่อให้นับเป็น 1 คะแนน</li>
                 <li>เมื่อได้คะแนนแล้ว ต้อง<b>สลับข้างมือ</b>เพื่อสะสมคะแนนถัดไป</li>
             </ul>
         </div>
@@ -310,8 +346,9 @@
         
         <div class="feedback" id="feedbackText">ยกมือขึ้นมาทั้ง 2 ข้าง จีบ 1 ข้าง แอล 1 ข้าง</div>
 
-        <!-- หน้าจอกล้อง โดยย้ายคะแนนมาอยู่มุมขวาบนของจอภาพผู้เล่น -->
+        <!-- หน้าจอกล้อง โดยย้ายคะแนนมาอยู่มุมขวาบนของจอภาพผู้เล่น และเพิ่มข้อความ "ถูกต้อง!" ตรงกลาง -->
         <div class="game-container">
+            <div id="correctOverlay" class="correct-overlay">ถูกต้อง! 🎉</div>
             <div class="score-hud">
                 ⭐ <span id="scoreDisplay">0</span> คะแนน
             </div>
@@ -343,6 +380,7 @@
         
         let lastValidState = null; 
         let holdStartTime = null;
+        let lastScoreTime = 0; // เก็บเวลาล่าสุดที่ได้คะแนน เพื่อค้างข้อความสีเขียวและ Overlay ไว้ 0.5 วินาที
 
         const startScreen = document.getElementById('start-screen');
         const instructionScreen = document.getElementById('instruction-screen');
@@ -354,6 +392,7 @@
         const bgm = document.getElementById('bgm');
         const sndCorrect = document.getElementById('snd-correct');
         const sndWrong = document.getElementById('snd-wrong');
+        const correctOverlay = document.getElementById('correctOverlay');
 
         window.onload = function() { displayLeaderboard(); };
 
@@ -377,6 +416,7 @@
             bgm.pause();
             isBGMPlaying = false;
             bgm.currentTime = 0;
+            correctOverlay.classList.remove('show');
             
             instructionScreen.classList.remove('active-screen');
             gameScreen.classList.remove('active-screen');
@@ -416,6 +456,8 @@
             timeLeft = 30; 
             lastValidState = null; 
             holdStartTime = null;  
+            lastScoreTime = 0;
+            correctOverlay.classList.remove('show');
             
             document.getElementById('scoreDisplay').innerText = score;
             document.getElementById('timeDisplay').innerText = timeLeft;
@@ -443,6 +485,7 @@
                 feedbackEl.innerText = "⏸️ หยุดพักเกมชั่วคราว... กด 'เล่นต่อ' เพื่อเล่นต่อ";
                 feedbackEl.style.color = "#7f8c8d";
                 holdStartTime = null; 
+                correctOverlay.classList.remove('show');
             } else {
                 isPaused = false;
                 timerInterval = setInterval(updateTimer, 1000);
@@ -471,6 +514,7 @@
             bgm.pause();
             isBGMPlaying = false;
             bgm.currentTime = 0; 
+            correctOverlay.classList.remove('show');
             
             if (completedTarget) {
                 sndCorrect.play();
@@ -578,6 +622,19 @@
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
             let handsDetected = results.multiHandLandmarks ? results.multiHandLandmarks.length : 0;
+            const now = Date.now();
+
+            // เช็กว่าอยู่ในช่วง 0.5 วินาทีหลังจากเพิ่งได้คะแนนหรือไม่
+            const isJustScored = (now - lastScoreTime) < 500;
+
+            if (isJustScored) {
+                // แสดงผลความสำเร็จค้างไว้ 0.5 วินาที
+                correctOverlay.classList.add('show');
+                document.getElementById('feedbackText').innerText = `✨ ยอดเยี่ยมมาก! ได้ ${score}/10 คะแนน สลับข้างต่อไปเลย!`;
+                document.getElementById('feedbackText').style.color = "#27ae60";
+            } else {
+                correctOverlay.classList.remove('show');
+            }
 
             if (handsDetected >= 2) {
                 let handData = [];
@@ -622,18 +679,23 @@
                 if (currentState) {
                     if (currentState === lastValidState) {
                         holdStartTime = null; 
-                        document.getElementById('feedbackText').innerText = "ทำได้ดี! ตอนนี้สลับมืออีกข้าง เพื่อรับคะแนน";
-                        document.getElementById('feedbackText').style.color = "#2980b9"; 
+                        if (!isJustScored) {
+                            document.getElementById('feedbackText').innerText = "ทำได้ดี! ตอนนี้สลับมืออีกข้าง เพื่อรับคะแนน";
+                            document.getElementById('feedbackText').style.color = "#2980b9"; 
+                        }
                     } else {
                         if (!holdStartTime) {
                             holdStartTime = Date.now(); 
                         }
                         
                         let holdTime = Date.now() - holdStartTime;
-                        let remainingSec = ((1000 - holdTime) / 1000).toFixed(1);
+                        let remainingSec = ((500 - holdTime) / 1000).toFixed(1);
+                        if (remainingSec < 0) remainingSec = "0.0";
                         
-                        if (holdTime >= 1000) { // หน่วงเวลา 1 วินาที (1,000 มิลลิวินาที)
-                            score += 1; // เพิ่มทีละ 1 คะแนน
+                        // ปรับลดเวลาค้างท่าจาก 1000ms เหลือ 500ms (0.5 วินาที)
+                        if (holdTime >= 500) { 
+                            score += 1; 
+                            lastScoreTime = Date.now(); // บันทึกเวลาที่ได้คะแนน
                             document.getElementById('scoreDisplay').innerText = score;
                             
                             sndCorrect.currentTime = 0;
@@ -642,29 +704,37 @@
                             lastValidState = currentState; 
                             holdStartTime = null; 
 
-                            if (score >= 10) { // ครบ 10 คะแนน ชนะเกม
+                            if (score >= 10) { 
                                 endGame(true); 
                                 canvasCtx.restore();
                                 return;
                             } else {
-                                document.getElementById('feedbackText').innerText = `ยอดเยี่ยมมาก! ได้ ${score}/10 คะแนน สลับข้างต่อไปเลย!`;
+                                // แสดงผลทันที
+                                correctOverlay.classList.add('show');
+                                document.getElementById('feedbackText').innerText = `✨ ยอดเยี่ยมมาก! ได้ ${score}/10 คะแนน สลับข้างต่อไปเลย!`;
                                 document.getElementById('feedbackText').style.color = "#27ae60"; 
                             }
                         } else {
-                            document.getElementById('feedbackText').innerText = `สลับฝั่งถูกต้อง! ค้างท่านี้ไว้อีก... ${remainingSec} วินาที`;
-                            document.getElementById('feedbackText').style.color = "#e67e22"; 
+                            if (!isJustScored) {
+                                document.getElementById('feedbackText').innerText = `สลับฝั่งถูกต้อง! ค้างท่านี้ไว้อีก... ${remainingSec} วินาที`;
+                                document.getElementById('feedbackText').style.color = "#e67e22"; 
+                            }
                         }
                     }
                 } else {
                     holdStartTime = null; 
-                    document.getElementById('feedbackText').innerText = "ทำให้ถูกต้อง จีบ 1 ข้าง แอล 1 ข้าง";
-                    document.getElementById('feedbackText').style.color = "#d35400";
+                    if (!isJustScored) {
+                        document.getElementById('feedbackText').innerText = "ทำให้ถูกต้อง จีบ 1 ข้าง แอล 1 ข้าง";
+                        document.getElementById('feedbackText').style.color = "#d35400";
+                    }
                 }
 
             } else {
                 holdStartTime = null; 
-                document.getElementById('feedbackText').innerText = "ยกมือขึ้นมาทั้ง 2 ข้าง เพื่อเล่นเกม!";
-                document.getElementById('feedbackText').style.color = "#c0392b";
+                if (!isJustScored) {
+                    document.getElementById('feedbackText').innerText = "ยกมือขึ้นมาทั้ง 2 ข้าง เพื่อเล่นเกม!";
+                    document.getElementById('feedbackText').style.color = "#c0392b";
+                }
             }
             
             canvasCtx.restore();
