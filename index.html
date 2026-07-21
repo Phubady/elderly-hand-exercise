@@ -272,10 +272,12 @@
             margin-bottom: 6px;
         }
 
-        .pinky-svg-icon {
-            width: 48px;
-            height: 48px;
+        /* ปรับดีไซน์ Emoji นิ้วก้อยสไตล์สม่ำเสมอ */
+        .pinky-emoji-styled {
+            width: 52px;
+            height: 52px;
             vertical-align: middle;
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.15));
         }
     </style>
 </head>
@@ -285,15 +287,18 @@
     <audio id="snd-correct" src="correct.mp3"></audio>
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
+    <!-- Template ไอคอนนิ้วก้อยสีเหลืองสไตล์ Emoji ชนิดเดียวกับ 👍 ✋ 👆 -->
     <svg style="display:none;">
-        <g id="svg-pinky-only">
-            <svg viewBox="0 0 100 100" width="50" height="50">
-                <path d="M 25 45 L 75 45 L 75 85 C 75 92, 25 92, 25 85 Z" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <path d="M 28 45 C 28 35, 40 35, 40 45" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <path d="M 40 45 C 40 35, 52 35, 52 45" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <path d="M 52 45 C 52 35, 64 35, 64 45" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <path d="M 25 60 C 15 60, 20 75, 30 75" fill="#ffb6c1" stroke="#d87093" stroke-width="4"/>
-                <path d="M 64 45 L 64 15 C 64 8, 76 8, 76 15 L 76 45" fill="#ffd1dc" stroke="#d87093" stroke-width="4"/>
+        <g id="svg-pinky-emoji">
+            <svg viewBox="0 0 100 100" width="52" height="52">
+                <!-- กำมือฐานสีเหลืองอีโมจิ -->
+                <path d="M 30 48 C 25 48, 25 82, 35 85 L 68 85 C 75 85, 75 52, 65 52 Z" fill="#FFCC4D"/>
+                <!-- นิ้วที่พับ -->
+                <path d="M 32 52 C 32 44, 42 44, 42 52 C 42 44, 52 44, 52 52 C 52 44, 62 44, 62 52" fill="#FFCC4D" stroke="#E69D00" stroke-width="3.5" stroke-linecap="round"/>
+                <!-- นิ้วโป้งพับข้าง -->
+                <path d="M 28 62 C 20 62, 22 76, 36 74" fill="#FFCC4D" stroke="#E69D00" stroke-width="3.5" stroke-linecap="round"/>
+                <!-- นิ้วก้อยชูขึ้นสูงอย่างสวยงาม -->
+                <rect x="61" y="14" width="15" height="42" rx="7.5" fill="#FFCC4D" stroke="#E69D00" stroke-width="3"/>
             </svg>
         </g>
     </svg>
@@ -420,7 +425,7 @@
     </div>
 
     <script>
-        const PINKY_SVG_HTML = `<use href="#svg-pinky-only"/>`;
+        const PINKY_EMOJI_HTML = `<svg viewBox="0 0 100 100" class="pinky-emoji-styled"><use href="#svg-pinky-emoji"/></svg>`;
 
         const LEVELS = [
             {
@@ -453,7 +458,7 @@
                 timeLimit: 20,
                 emojiLeft: "👍",
                 labelLeft: "1. ชูโป้ง",
-                emojiRight: `<svg viewBox="0 0 100 100" class="pinky-svg-icon">${PINKY_SVG_HTML}</svg>`,
+                emojiRight: PINKY_EMOJI_HTML,
                 labelRight: "2. สลับชูก้อย"
             },
             {
@@ -464,7 +469,7 @@
                 timeLimit: 20,
                 emojiLeft: "👍",
                 labelLeft: "1. ชูโป้ง",
-                emojiRight: `<svg viewBox="0 0 100 100" class="pinky-svg-icon">${PINKY_SVG_HTML}</svg>`,
+                emojiRight: PINKY_EMOJI_HTML,
                 labelRight: "2. สลับชูก้อย"
             },
             {
@@ -863,9 +868,13 @@
                     const targetSideTh = targetSide === "Right" ? "มือขวา" : "มือซ้าย";
 
                     let targetHandLM = null;
+                    let detectedHandLabel = "";
+
                     for (let i = 0; i < results.multiHandedness.length; i++) {
-                        // ปรับแก้ Invert สำหรับกล้องหน้า: MediaPipe Left = Real Right Hand
-                        let realHandLabel = (results.multiHandedness[i].label === "Left") ? "Right" : "Left";
+                        // ใช้ค่าจาก MediaPipe ตรงๆ ไม่ต้อง Invert
+                        let realHandLabel = results.multiHandedness[i].label; 
+                        detectedHandLabel = realHandLabel === "Right" ? "มือขวา" : "มือซ้าย";
+
                         if (realHandLabel === targetSide) {
                             targetHandLM = results.multiHandLandmarks[i];
                             break;
@@ -883,7 +892,7 @@
 
                             if (tapSeqStep === 0) {
                                 if (!isJustScored) {
-                                    document.getElementById('feedbackText').innerText = `👉 ใช้ ${targetSideTh} นำนิ้วโป้งแตะ "นิ้วชี้"`;
+                                    document.getElementById('feedbackText').innerText = `👉 ใช้${targetSideTh} นำนิ้วโป้งแตะ "นิ้วชี้"`;
                                     document.getElementById('feedbackText').style.color = "#d35400";
                                 }
                                 if (dIndex < thresh) tapSeqStep = 1;
@@ -913,18 +922,20 @@
 
                         // --- ด่าน 3 & 4: ชูโป้ง ➔ สลับชูก้อย ---
                         else if (currentLevelIdx === 2 || currentLevelIdx === 3) {
-                            const thumbExt = isFingerExtended(targetHandLM, 4, 2);
+                            const thumbDistFromIndex = getDistance(targetHandLM[4], targetHandLM[5]);
                             const indexExt = isFingerExtended(targetHandLM, 8, 6);
                             const middleExt = isFingerExtended(targetHandLM, 12, 10);
                             const ringExt = isFingerExtended(targetHandLM, 16, 14);
                             const pinkyExt = isFingerExtended(targetHandLM, 20, 18);
 
-                            const isThumbOnly = thumbExt && !indexExt && !middleExt && !ringExt && !pinkyExt;
-                            const isPinkyOnly = pinkyExt && !indexExt && !middleExt && !ringExt && !thumbExt;
+                            // นิ้วโป้งชูอยู่ (กางออก) และนิ้วอื่นพับ
+                            const isThumbOnly = (thumbDistFromIndex > 0.11) && !indexExt && !middleExt && !ringExt && !pinkyExt;
+                            // นิ้วก้อยชูอยู่ และ นิ้วชี้/กลาง/นาง พับอยู่
+                            const isPinkyOnly = pinkyExt && !indexExt && !middleExt && !ringExt;
 
                             if (toggleSubState === "Thumb") {
                                 if (!isJustScored) {
-                                    document.getElementById('feedbackText').innerText = `👉 ชูโป้งแล้ว! ตอนนี้สลับไป "ชูนิ้วก้อย" 🤙`;
+                                    document.getElementById('feedbackText').innerText = `👉 ชูโป้งแล้ว! ตอนนี้สลับไป "ชูเฉพาะนิ้วก้อย"`;
                                     document.getElementById('feedbackText').style.color = "#2980b9";
                                 }
                                 if (isPinkyOnly) {
@@ -933,7 +944,7 @@
                                 }
                             } else {
                                 if (!isJustScored) {
-                                    document.getElementById('feedbackText').innerText = `👉 ใช้ ${targetSideTh} "ชูนิ้วโป้ง" 👍`;
+                                    document.getElementById('feedbackText').innerText = `👉 ใช้${targetSideTh} "ชูนิ้วโป้ง" 👍`;
                                     document.getElementById('feedbackText').style.color = "#d35400";
                                 }
                                 if (isThumbOnly) {
@@ -958,7 +969,7 @@
                                     document.getElementById('feedbackText').innerText = `👉 จีบแล้ว! ตอนนี้สลับทำเป็น "รูปตัว L" 👆`;
                                     document.getElementById('feedbackText').style.color = "#2980b9";
                                 } else {
-                                    document.getElementById('feedbackText').innerText = `👉 ใช้ ${targetSideTh} ทำ "ท่าจีบ" 👌`;
+                                    document.getElementById('feedbackText').innerText = `👉 ใช้${targetSideTh} ทำ "ท่าจีบ" 👌`;
                                     document.getElementById('feedbackText').style.color = "#d35400";
                                 }
                             }
@@ -973,7 +984,11 @@
 
                     } else {
                         if (!isJustScored) {
-                            document.getElementById('feedbackText').innerText = `⚠️ กรุณายก "${targetSideTh}" ขึ้นมาให้อยู่ในกล้อง`;
+                            if (detectedHandLabel !== "") {
+                                document.getElementById('feedbackText').innerText = `⚠️ ตรวจพบ ${detectedHandLabel} (ต้องใช้ ${targetSideTh} ค่ะ)`;
+                            } else {
+                                document.getElementById('feedbackText').innerText = `⚠️ กรุณายก "${targetSideTh}" ขึ้นมาให้อยู่ในกล้อง`;
+                            }
                             document.getElementById('feedbackText').style.color = "#c0392b";
                         }
                     }
@@ -987,7 +1002,7 @@
 
                         for (let i = 0; i < results.multiHandLandmarks.length; i++) {
                             const landmarks = results.multiHandLandmarks[i];
-                            let realHand = (results.multiHandedness[i].label === "Left") ? "Right" : "Left";
+                            let realHand = results.multiHandedness[i].label; // Direct Hand Label
 
                             const thumbIndexDist = getDistance(landmarks[4], landmarks[8]);
                             const indexExt  = isFingerExtended(landmarks, 8, 6);
