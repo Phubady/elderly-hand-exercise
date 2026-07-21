@@ -40,7 +40,7 @@
             font-family: 'Kanit', sans-serif;
             font-size: 20px;
             padding: 10px 24px;
-            margin: 5px;
+            margin: 6px;
             border: none;
             border-radius: 15px;
             cursor: pointer;
@@ -118,14 +118,14 @@
             background: #ffffff;
             border: 2px dashed #d87093;
             border-radius: 15px;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
         }
         .example-title {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: bold;
             color: #5a3d31;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .emoji-container {
             display: flex;
@@ -134,7 +134,7 @@
             background: #fff5f8;
             border: 2px solid #ffc0cb;
             border-radius: 15px;
-            padding: 6px 10px;
+            padding: 8px 10px;
         }
         .emoji-card {
             display: flex;
@@ -143,18 +143,18 @@
             flex: 1;
         }
         .emoji-card .emoji {
-            font-size: 50px;
+            font-size: 55px;
             line-height: 1.1;
         }
         .emoji-card .label {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
             color: #d87093;
-            margin-top: 2px;
+            margin-top: 4px;
         }
         .emoji-divider {
             width: 2px;
-            height: 55px;
+            height: 60px;
             background-color: #ffb6c1;
             border-radius: 2px;
         }
@@ -188,7 +188,7 @@
             transform: translateX(-50%) scale(1);
         }
 
-        /* ปรับสไตล์ของเวลามุมซ้ายบนกล้องให้เหมือนกรอบคะแนน */
+        /* สไตล์ของเวลามุมซ้ายบนกล้อง */
         .timer-hud {
             position: absolute;
             top: 12px;
@@ -207,6 +207,7 @@
             gap: 4px;
         }
         
+        /* สไตล์ของคะแนนมุมขวาบนกล้อง */
         .score-hud {
             position: absolute;
             top: 12px;
@@ -258,11 +259,11 @@
             padding: 15px 20px;
             margin: 15px 0;
             text-align: left;
-            font-size: 17px;
+            font-size: 18px;
             line-height: 1.6;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-        .instruction-box ol {
+        .instruction-box ul {
             margin: 5px 0 0 0;
             padding-left: 20px;
         }
@@ -283,7 +284,7 @@
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
         <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
         <br>
-        <button class="btn-green" onclick="goToInstructionScreen()">ถัดไป ➔</button>
+        <button class="btn-green" onclick="initGameSession()">เริ่มเกมตะลุย 7 ด่าน ➔</button>
         
         <div class="leaderboard">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -296,24 +297,37 @@
         </div>
     </div>
 
-    <!-- หน้าคำอธิบายด่านต่างๆ -->
-    <div id="instruction-screen" class="screen">
-        <h1>คำอธิบายภารกิจ 7 ด่าน 🎯</h1>
+    <!-- หน้าคำอธิบายประจำแต่ละด่าน (ขึ้นก่อนเริ่มเล่นด่านนั้นๆ) -->
+    <div id="level-instruction-screen" class="screen">
+        <h1 id="instLevelTitle">คำอธิบายด่านที่ 1</h1>
         <div class="instruction-box">
-            <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 18px;">ตะลุยด่านฝึกสมอง:</p>
-            <ol>
-                <li><b>ด่าน 1:</b> มือขวา โป้งแตะ ชี้➜กลาง➜นาง➜ก้อย (สะสม 5 คะแนน)</li>
-                <li><b>ด่าน 2:</b> มือซ้าย โป้งแตะ ชี้➜กลาง➜นาง➜ก้อย (สะสม 5 คะแนน)</li>
-                <li><b>ด่าน 3:</b> มือขวา ชูโป้ง สลับ ชูก้อย (สะสม 5 คะแนน)</li>
-                <li><b>ด่าน 4:</b> มือซ้าย ชูโป้ง สลับ ชูก้อย (สะสม 5 คะแนน)</li>
-                <li><b>ด่าน 5:</b> มือขวา ทำจีบ สลับ ตัวแอล L (สะสม 5 คะแนน)</li>
-                <li><b>ด่าน 6:</b> มือซ้าย ทำจีบ สลับ ตัวแอล L (สะสม 5 คะแนน)</li>
-                <li><b>ด่าน 7:</b> สองมือ จีบ-แอล สลับฝั่ง (สะสม 10 คะแนน)</li>
-            </ol>
+            <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 20px;">ภารกิจด่านนี้:</p>
+            <p id="instLevelDesc" style="font-size: 18px; color: #5a3d31; font-weight: bold; margin: 8px 0;"></p>
+            <ul>
+                <li>เป้าหมาย: สะสมให้ได้ <b id="instTargetScore">5</b> คะแนน</li>
+                <li>เวลาจำกัด: <b id="instTimeLimit">20</b> วินาที</li>
+            </ul>
         </div>
-        <button class="btn-green" onclick="startGame()">พร้อมแล้ว เริ่มตะลุยด่านเลย!</button>
+        
+        <!-- ตัวอย่างท่าทางประจำเป็นด่าน -->
+        <div class="example-box">
+            <div class="example-title">ตัวอย่างท่าทางที่ต้องทำ:</div>
+            <div class="emoji-container">
+                <div class="emoji-card">
+                    <span class="emoji" id="instEmojiLeft">✋</span>
+                    <span class="label" id="instLabelLeft">-</span>
+                </div>
+                <div class="emoji-divider"></div>
+                <div class="emoji-card">
+                    <span class="emoji" id="instEmojiRight">👌</span>
+                    <span class="label" id="instLabelRight">-</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-green" onclick="startCurrentLevel()">พร้อมแล้ว! เริ่มด่านนี้เลย</button>
         <br>
-        <button class="btn-gray" style="font-size: 16px; padding: 5px 15px;" onclick="goToStartScreen()">◀ ย้อนกลับ</button>
+        <button class="btn-gray" style="font-size: 16px; padding: 5px 15px;" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
     </div>
 
     <!-- หน้าเล่นเกม -->
@@ -326,18 +340,17 @@
             </div>
         </div>
         
-        <!-- ตัวอย่างท่าทางจะปรับเปลี่ยนตามด่าน -->
-        <div class="example-box">
-            <div class="example-title" id="levelDescTitle">กำลังโหลดด่าน...</div>
-            <div class="emoji-container">
+        <!-- ตัวอย่างท่าทางย่อส่วนในหน้าเล่น -->
+        <div class="example-box" style="padding: 6px; margin-bottom: 8px;">
+            <div class="emoji-container" style="padding: 4px;">
                 <div class="emoji-card">
-                    <span class="emoji" id="emojiLeft">✋</span>
-                    <span class="label" id="labelLeft">-</span>
+                    <span class="emoji" id="gameEmojiLeft" style="font-size: 40px;">✋</span>
+                    <span class="label" id="gameLabelLeft" style="font-size: 14px;">-</span>
                 </div>
-                <div class="emoji-divider"></div>
+                <div class="emoji-divider" style="height: 45px;"></div>
                 <div class="emoji-card">
-                    <span class="emoji" id="emojiRight">👌</span>
-                    <span class="label" id="labelRight">-</span>
+                    <span class="emoji" id="gameEmojiRight" style="font-size: 40px;">👌</span>
+                    <span class="label" id="gameLabelRight" style="font-size: 14px;">-</span>
                 </div>
             </div>
         </div>
@@ -361,25 +374,41 @@
         </div>
     </div>
 
-    <!-- หน้าสรุปผล -->
+    <!-- หน้าแสดงความยินดีเมื่อ "ผ่านด่าน" (ให้ผู้เล่นกดพักเพื่อไปด่านต่อไป) -->
+    <div id="level-clear-screen" class="screen">
+        <h1>🎉 ผ่านด่านแล้ว!</h1>
+        <h2 id="clearLevelName" style="color: #27ae60;">คุณผ่านด่านที่ 1 เรียบร้อย</h2>
+        
+        <div class="instruction-box" style="text-align: center;">
+            <p style="font-size: 20px; margin: 5px 0;">คะแนนสะสมรวมตอนนี้: <b id="clearTotalScore" style="color: #e74c3c; font-size: 28px;">0</b> ⭐</p>
+        </div>
+
+        <button class="btn-green" id="nextLevelBtn" onclick="proceedToNextLevelInstruction()">ไปด่านถัดไป ➔</button>
+        <br>
+        <button class="btn-blue" onclick="retryCurrentLevel()">เล่นด่านนี้อีกครั้ง 🔄</button>
+        <br>
+        <button class="btn-gray" onclick="goToStartScreen()">ย้อนกลับหน้าแรก</button>
+    </div>
+
+    <!-- หน้าสรุปผลลัพธ์สุดท้าย (จบเกม/หมดเวลา) -->
     <div id="result-screen" class="screen">
         <h1 id="resTitle">หมดเวลา! ⏰</h1>
         <h2>คุณ <span id="resName"></span> ทำได้ทั้งหมด</h2>
         <h1 style="font-size: 55px; color: #e74c3c; margin: 10px 0;"><span id="resScore"></span> ⭐</h1>
         <p id="resFeedback"></p>
         
-        <button class="btn-blue" onclick="startGame()">เล่นใหม่อีกครั้ง</button>
+        <button class="btn-blue" onclick="initGameSession()">เริ่มเล่นใหม่ตั้งแต่ด่าน 1</button>
         <br>
-        <button class="btn-gray" onclick="goToStartScreen()">ย้อนกลับหน้าหลัก</button>
+        <button class="btn-gray" onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
     </div>
 
     <script>
-        // ข้อมูลด่านทั้ง 7 ด่าน
+        // รายละเอียดด่านทั้ง 7 ด่าน
         const LEVELS = [
             {
                 level: 1,
                 title: "ด่านที่ 1: มือขวาแตะนิ้ว (ชี้➜กลาง➜นาง➜ก้อย)",
-                desc: "ใช้มือขวา นำนิ้วโป้งแตะ ชี้ ➔ กลาง ➔ นาง ➔ ก้อย ตามลำดับ",
+                desc: "ใช้มือขวา นำนิ้วโป้งแตะ ชี้ ➔ กลาง ➔ นาง ➔ ก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "✋",
@@ -390,7 +419,7 @@
             {
                 level: 2,
                 title: "ด่านที่ 2: มือซ้ายแตะนิ้ว (ชี้➜กลาง➜นาง➜ก้อย)",
-                desc: "ใช้มือซ้าย นำนิ้วโป้งแตะ ชี้ ➔ กลาง ➔ นาง ➔ ก้อย ตามลำดับ",
+                desc: "ใช้มือซ้าย นำนิ้วโป้งแตะ ชี้ ➔ กลาง ➔ นาง ➔ ก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👌",
@@ -401,7 +430,7 @@
             {
                 level: 3,
                 title: "ด่านที่ 3: มือขวา ชูโป้ง สลับ ชูก้อย",
-                desc: "ใช้มือขวา ชูนิ้วโป้ง สลับกับ ชูนิ้วก้อย",
+                desc: "ใช้มือขวา ชูนิ้วโป้ง สลับกับ ชูนิ้วก้อย นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👍",
@@ -412,7 +441,7 @@
             {
                 level: 4,
                 title: "ด่านที่ 4: มือซ้าย ชูโป้ง สลับ ชูก้อย",
-                desc: "ใช้มือซ้าย ชูนิ้วโป้ง สลับกับ ชูนิ้วก้อย",
+                desc: "ใช้มือซ้าย ชูนิ้วโป้ง สลับกับ ชูนิ้วก้อย นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👍",
@@ -423,7 +452,7 @@
             {
                 level: 5,
                 title: "ด่านที่ 5: มือขวา จีบ สลับ ตัวแอล (L)",
-                desc: "ใช้มือขวา ทำท่าจีบ สลับกับ ท่าตัวแอล (L)",
+                desc: "ใช้มือขวา ทำท่าจีบ สลับกับ ท่าตัวแอล (L) นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👌",
@@ -434,7 +463,7 @@
             {
                 level: 6,
                 title: "ด่านที่ 6: มือซ้าย จีบ สลับ ตัวแอล (L)",
-                desc: "ใช้มือซ้าย ทำท่าจีบ สลับกับ ท่าตัวแอล (L)",
+                desc: "ใช้มือซ้าย ทำท่าจีบ สลับกับ ท่าตัวแอล (L) นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "👌",
@@ -445,7 +474,7 @@
             {
                 level: 7,
                 title: "ด่านที่ 7: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ)",
-                desc: "มือซ้ายจีบ-ขวาแอล L ค้างไว้ 0.5s แล้วสลับฝั่ง",
+                desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง นับเป็น 1 คะแนน",
                 targetScore: 10,
                 timeLimit: 30,
                 emojiLeft: "👌",
@@ -467,16 +496,18 @@
         
         let lastScoreTime = 0; // ควบคุม Feedback สีเขียวค้างไว้ 1 วินาที (1000ms)
 
-        // สถานะติดตามการทำท่าทางของแต่ละด่าน
-        let tapSeqStep = 0;           // สำหรับ ด่าน 1 และ 2 (0:ชี้, 1:กลาง, 2:นาง, 3:ก้อย)
-        let toggleSubState = null;     // สำหรับ ด่าน 3, 4, 5, 6
-        let lastValidState = null;     // สำหรับ ด่าน 7
-        let holdStartTime = null;      // สำหรับ ด่าน 7
+        // ตัวแปรเก็บสถานะท่าทาง
+        let tapSeqStep = 0;           
+        let toggleSubState = null;     
+        let lastValidState = null;     
+        let holdStartTime = null;      
 
         const startScreen = document.getElementById('start-screen');
-        const instructionScreen = document.getElementById('instruction-screen');
+        const levelInstructionScreen = document.getElementById('level-instruction-screen');
         const gameScreen = document.getElementById('game-screen');
+        const levelClearScreen = document.getElementById('level-clear-screen');
         const resultScreen = document.getElementById('result-screen');
+        
         const videoElement = document.getElementById('video');
         const canvasElement = document.getElementById('output_canvas');
         const canvasCtx = canvasElement.getContext('2d');
@@ -495,6 +526,16 @@
         }
         document.body.addEventListener('click', startBGM);
 
+        function showScreen(targetScreen) {
+            startScreen.classList.remove('active-screen');
+            levelInstructionScreen.classList.remove('active-screen');
+            gameScreen.classList.remove('active-screen');
+            levelClearScreen.classList.remove('active-screen');
+            resultScreen.classList.remove('active-screen');
+
+            targetScreen.classList.add('active-screen');
+        }
+
         function goToStartScreen() {
             if (gameActive && totalScore > 0) {
                 saveScore(playerName, totalScore);
@@ -509,51 +550,50 @@
             bgm.currentTime = 0;
             correctOverlay.classList.remove('show');
             
-            instructionScreen.classList.remove('active-screen');
-            gameScreen.classList.remove('active-screen');
-            resultScreen.classList.remove('active-screen');
-            startScreen.classList.add('active-screen');
-            
+            showScreen(startScreen);
             displayLeaderboard();
         }
 
-        function goToInstructionScreen() {
+        // เริ่มต้นเซสชันเกมใหม่ตั้งแต่ด่าน 1
+        function initGameSession() {
             startBGM();
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+            currentLevelIdx = 0;
+            totalScore = 0;
             
-            startScreen.classList.remove('active-screen');
-            resultScreen.classList.remove('active-screen');
-            gameScreen.classList.remove('active-screen');
-            instructionScreen.classList.add('active-screen');
+            showLevelInstruction(currentLevelIdx);
         }
 
-        function startGame() {
-            startBGM(); 
-            playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+        // แสดงหน้าคำอธิบายประจำด่านนั้นๆ ก่อนเริ่มเล่น
+        function showLevelInstruction(levelIdx) {
+            const lvl = LEVELS[levelIdx];
+
+            document.getElementById('instLevelTitle').innerText = `คำอธิบายด่านที่ ${lvl.level}/7`;
+            document.getElementById('instLevelDesc').innerText = lvl.desc;
+            document.getElementById('instTargetScore').innerText = lvl.targetScore;
+            document.getElementById('instTimeLimit').innerText = lvl.timeLimit;
             
-            startScreen.classList.remove('active-screen');
-            instructionScreen.classList.remove('active-screen');
-            resultScreen.classList.remove('active-screen');
-            gameScreen.classList.add('active-screen');
+            document.getElementById('instEmojiLeft').innerText = lvl.emojiLeft;
+            document.getElementById('instLabelLeft').innerText = lvl.labelLeft;
+            document.getElementById('instEmojiRight').innerText = lvl.emojiRight;
+            document.getElementById('instLabelRight').innerText = lvl.labelRight;
+
+            showScreen(levelInstructionScreen);
+        }
+
+        // กดปุ่มเริ่มเล่นด่านปัจจุบัน
+        function startCurrentLevel() {
+            startBGM(); 
+            const lvl = LEVELS[currentLevelIdx];
 
             gameActive = true;
             isPaused = false; 
-            currentLevelIdx = 0;
-            totalScore = 0;
 
             const pauseBtn = document.getElementById('pauseBtn');
             pauseBtn.innerText = "⏸️ พัก";
             pauseBtn.className = "btn-yellow";
 
-            setupLevel(currentLevelIdx);
-            
-            clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimer, 1000);
-            camera.start();
-        }
-
-        function setupLevel(levelIdx) {
-            const lvl = LEVELS[levelIdx];
+            // รีเซ็ตค่าด่าน
             levelScore = 0;
             timeLeft = lvl.timeLimit;
             tapSeqStep = 0;
@@ -562,12 +602,12 @@
             holdStartTime = null;
             lastScoreTime = 0;
 
+            // ตั้งค่าหน้า UI เกม
             document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/7`;
-            document.getElementById('levelDescTitle').innerText = lvl.desc;
-            document.getElementById('emojiLeft').innerText = lvl.emojiLeft;
-            document.getElementById('labelLeft').innerText = lvl.labelLeft;
-            document.getElementById('emojiRight').innerText = lvl.emojiRight;
-            document.getElementById('labelRight').innerText = lvl.labelRight;
+            document.getElementById('gameEmojiLeft').innerText = lvl.emojiLeft;
+            document.getElementById('gameLabelLeft').innerText = lvl.labelLeft;
+            document.getElementById('gameEmojiRight').innerText = lvl.emojiRight;
+            document.getElementById('gameLabelRight').innerText = lvl.labelRight;
 
             document.getElementById('scoreDisplay').innerText = levelScore;
             document.getElementById('targetDisplay').innerText = lvl.targetScore;
@@ -575,6 +615,12 @@
             document.getElementById('feedbackText').innerText = "พร้อมแล้ว! ยกมือขึ้นทำตามคำแนะนำได้เลยค่ะ";
             document.getElementById('feedbackText').style.color = "#d35400";
             correctOverlay.classList.remove('show');
+
+            showScreen(gameScreen);
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            camera.start();
         }
 
         function togglePause() {
@@ -612,6 +658,46 @@
             if (timeLeft <= 0) endGame(false);
         }
 
+        // เมื่อผ่านด่านปัจจุบัน
+        function handleLevelSuccess() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            camera.stop();
+            correctOverlay.classList.remove('show');
+
+            sndCorrect.play();
+
+            document.getElementById('clearLevelName').innerText = `คุณผ่าน ${LEVELS[currentLevelIdx].title} แล้วค่ะ! 🎉`;
+            document.getElementById('clearTotalScore').innerText = totalScore;
+
+            const nextBtn = document.getElementById('nextLevelBtn');
+            if (currentLevelIdx < LEVELS.length - 1) {
+                nextBtn.innerText = `ไปด่านถัดไป (ด่านที่ ${currentLevelIdx + 2}) ➔`;
+                nextBtn.style.display = "inline-flex";
+            } else {
+                // ถ้าจบด่านที่ 7
+                nextBtn.innerText = `ดูสรุปผลการเล่นทั้งหมด 🏆`;
+                nextBtn.style.display = "inline-flex";
+            }
+
+            showScreen(levelClearScreen);
+        }
+
+        // กดไปด่านถัดไป (เปิดหน้าคำอธิบายด่านถัดไป)
+        function proceedToNextLevelInstruction() {
+            if (currentLevelIdx < LEVELS.length - 1) {
+                currentLevelIdx++;
+                showLevelInstruction(currentLevelIdx);
+            } else {
+                endGame(true); // พิชิตครบ 7 ด่าน
+            }
+        }
+
+        // เล่นด่านเดิมซ้ำ
+        function retryCurrentLevel() {
+            showLevelInstruction(currentLevelIdx);
+        }
+
         function endGame(completedAll = false) {
             gameActive = false;
             isPaused = false;
@@ -632,8 +718,7 @@
                 saveScore(playerName, totalScore);
             }
             
-            gameScreen.classList.remove('active-screen');
-            resultScreen.classList.add('active-screen');
+            showScreen(resultScreen);
             
             document.getElementById('resName').innerText = playerName;
             document.getElementById('resScore').innerText = totalScore;
@@ -644,7 +729,7 @@
                 document.getElementById('resFeedback').innerText = "สุดยอดอัจฉริยะมากค่ะ! ผ่านครบทั้ง 7 ด่าน สมองแข็งแรงและว่องไวมากๆ เลยค่ะ!";
             } else {
                 resTitle.innerText = "หมดเวลา! ⏰";
-                document.getElementById('resFeedback').innerText = `คุณทำถึงด่านที่ ${currentLevelIdx + 1} ได้คะแนนสะสมรวม ${totalScore} คะแนน เก่งมากๆ แล้วค่ะ ฝึกฝนบ่อยๆ นะคะ!`;
+                document.getElementById('resFeedback').innerText = `ทำได้ดีมากค่ะ! ผ่านถึงด่านที่ ${currentLevelIdx + 1} ได้คะแนนสะสมรวม ${totalScore} คะแนน ลองฝึกอีกครั้งนะคะ!`;
             }
         }
 
@@ -714,11 +799,11 @@
             return getDistance(tip, wrist) > getDistance(pip, wrist);
         }
 
-        // เพิ่มคะแนน และตรวจสอบการผ่านด่าน
+        // เพิ่มคะแนน และตรวจสอบผ่านด่าน
         function addPoint() {
             levelScore++;
             totalScore++;
-            lastScoreTime = Date.now(); // บันทึกเวลาเพื่อล็อกกรอบเขียว 1 วินาที (1000ms)
+            lastScoreTime = Date.now(); // ล็อกแสดงกรอบเขียว 1 วินาที (1000ms)
             
             sndCorrect.currentTime = 0;
             sndCorrect.play();
@@ -727,18 +812,11 @@
 
             const target = LEVELS[currentLevelIdx].targetScore;
             if (levelScore >= target) {
-                if (currentLevelIdx < LEVELS.length - 1) {
-                    currentLevelIdx++;
-                    setTimeout(() => {
-                        setupLevel(currentLevelIdx);
-                    }, 1000);
-                } else {
-                    endGame(true);
-                }
+                handleLevelSuccess();
             }
         }
 
-        // ฟังก์ชันประมวลผลวิดีโอกล้อง
+        // ประมวลผลภาพจากกล้อง
         function onResults(results) {
             if (!gameActive || isPaused) return;
 
@@ -747,7 +825,7 @@
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
             const now = Date.now();
-            // ล็อกแสดงผลสำเร็จค้างไว้ 1 วินาที (1000 มิลลิวินาที)
+            // ล็อก Feedback สีเขียวและ Overlay ไว้ 1 วินาที (1000 มิลลิวินาที)
             const isJustScored = (now - lastScoreTime) < 1000;
 
             if (isJustScored) {
@@ -757,9 +835,6 @@
             } else {
                 correctOverlay.classList.remove('show');
             }
-
-            const currentLvl = LEVELS[currentLevelIdx];
-            let handDetected = false;
 
             if (results.multiHandLandmarks && results.multiHandedness) {
                 // วาดเส้นมือที่ตรวจจับได้
@@ -774,7 +849,6 @@
                     const targetSide = (currentLevelIdx === 0 || currentLevelIdx === 2 || currentLevelIdx === 4) ? "Right" : "Left";
                     const targetSideTh = targetSide === "Right" ? "มือขวา" : "มือซ้าย";
 
-                    // หาตำแหน่งมือฝั่งที่ต้องการ
                     let targetHandLM = null;
                     for (let i = 0; i < results.multiHandedness.length; i++) {
                         if (results.multiHandedness[i].label === targetSide) {
@@ -784,8 +858,6 @@
                     }
 
                     if (targetHandLM) {
-                        handDetected = true;
-                        
                         // --- ด่าน 1 & 2: โป้งแตะ (ชี้ ➔ กลาง ➔ นาง ➔ ก้อย) ---
                         if (currentLevelIdx === 0 || currentLevelIdx === 1) {
                             const dIndex  = getDistance(targetHandLM[4], targetHandLM[8]);
@@ -890,10 +962,9 @@
                     }
                 }
 
-                // ==================== ด่าน 7 (สองมือ จีบ-แอล สลับฝั่ง ดั้งเดิม) ====================
+                // ==================== ด่าน 7 (สองมือ จีบ-แอล สลับฝั่ง) ====================
                 else if (currentLevelIdx === 6) {
                     if (results.multiHandLandmarks.length >= 2) {
-                        handDetected = true;
                         let handData = [];
 
                         for (let i = 0; i < 2; i++) {
@@ -940,7 +1011,7 @@
                                 let remainingSec = ((500 - holdTime) / 1000).toFixed(1);
                                 if (remainingSec < 0) remainingSec = "0.0";
                                 
-                                if (holdTime >= 500) { // หน่วงเวลาค้างไว้ 0.5 วินาที
+                                if (holdTime >= 500) { 
                                     lastValidState = currentState; 
                                     holdStartTime = null; 
                                     addPoint();
