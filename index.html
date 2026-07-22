@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>จับ จีบ จุ้ม ขยุ้มหัวใจ - ตะลุย 7 ด่าน</title>
+    <title>จับ จีบ จุ้ม ขยุ้มหัวใจ - ตะลุย 10 ด่าน</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -288,7 +288,6 @@
             color: #5a3d31;
         }
 
-        /* ตกแต่ง SVG อีโมจินิ้วก้อย ให้เป็นสไตล์ 3D Glossy เหมือนกับระบบ */
         .pinky-emoji-styled {
             width: 1em;
             height: 1em;
@@ -297,7 +296,6 @@
             filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2));
         }
 
-        /* ===================== ปรับให้เหมาะกับมือถือจอแนวตั้ง ===================== */
         @media (max-width: 480px) {
             body { padding: 6px; }
             .screen { padding: 12px; border-width: 3px; border-radius: 14px; }
@@ -354,7 +352,6 @@
     <audio id="snd-correct" src="correct.mp3"></audio>
     <audio id="snd-wrong" src="wrong.mp3"></audio>
 
-    <!-- SVG ดีไซน์ 3D Glossy Emoji นิ้วก้อย -->
     <svg style="display:none;">
         <defs>
             <linearGradient id="emojiSkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -373,19 +370,11 @@
         </defs>
         <g id="svg-pinky-emoji">
             <svg viewBox="0 0 100 100" width="100%" height="100%">
-                <!-- นิ้วก้อยตั้งชูขึ้น -->
                 <rect x="63" y="10" width="20" height="52" rx="10" fill="url(#emojiSkinGrad)" stroke="url(#emojiStrokeGrad)" stroke-width="2.5"/>
-                <!-- แสงสะท้อนบนนิ้วก้อย -->
                 <rect x="66" y="14" width="6" height="32" rx="3" fill="url(#emojiHighlight)"/>
-                
-                <!-- ฐานฝ่ามือขยุ้ม -->
                 <path d="M 20 48 C 16 48, 16 88, 28 90 L 72 90 C 82 90, 83 50, 72 48 Z" fill="url(#emojiSkinGrad)" stroke="url(#emojiStrokeGrad)" stroke-width="2.5"/>
-                
-                <!-- นิ้วชี้/กลาง/นาง พับลงมา -->
                 <path d="M 26 52 C 26 42, 38 42, 38 52 C 38 42, 50 42, 50 52 C 50 42, 62 42, 62 52" fill="none" stroke="url(#emojiStrokeGrad)" stroke-width="3.5" stroke-linecap="round"/>
                 <path d="M 26 52 C 26 43, 38 43, 38 52 C 38 43, 50 43, 50 52 C 50 43, 62 43, 62 52" fill="none" stroke="#FFE082" stroke-width="1.8" stroke-linecap="round"/>
-
-                <!-- นิ้วโป้งพับขวาง -->
                 <path d="M 18 64 C 10 64, 12 80, 32 76" fill="none" stroke="url(#emojiStrokeGrad)" stroke-width="4" stroke-linecap="round"/>
                 <path d="M 18 64 C 10 64, 12 80, 32 76" fill="none" stroke="#FFE082" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -450,7 +439,7 @@
     <!-- หน้าเล่นเกม -->
     <div id="game-screen" class="screen">
         <div class="info-bar">
-            <div id="levelBadge" class="level-badge">ด่านที่ 1/7</div>
+            <div id="levelBadge" class="level-badge">ด่านที่ 1/10</div>
             <div class="action-btns-group">
                 <button class="btn-blue" onclick="toggleHandSwap()" title="กดหากระบบตรวจสลับมือกัน">🔄 มือแสดงผิดฝั่ง?</button>
                 <button class="btn-yellow" id="pauseBtn" onclick="togglePause()">⏸️ พัก</button>
@@ -592,10 +581,43 @@
             },
             {
                 level: 7,
-                title: "ด่านที่ 7: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ)",
-                desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง นับเป็น 1 คะแนน",
+                title: "ด่านที่ 7: สองมือแตะนิ้วพร้อมกัน (ชี้➜กลาง➜นาง➜ก้อย)",
+                desc: "ใช้มือสองข้าง นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ ทำทั้งสองข้างพร้อมกัน 1 ครั้งได้ 1 คะแนน",
+                targetScore: 5,
+                timeLimit: 20,
+                emojiLeft: "👌",
+                labelLeft: "มือซ้าย",
+                emojiRight: "👌",
+                labelRight: "มือขวา"
+            },
+            {
+                level: 8,
+                title: "ด่านที่ 8: มือสองข้าง โป้ง-ก้อย สลับฝั่ง",
+                desc: "ใช้มือสองข้าง ขวาชูนิ้วโป้ง ซ้ายชูนิ้วก้อย แล้วสลับฝั่งกัน 1 ครั้งได้ 1 คะแนน",
+                targetScore: 5,
+                timeLimit: 20,
+                emojiLeft: PINKY_EMOJI_HTML,
+                labelLeft: "มือซ้าย (ก้อย)",
+                emojiRight: "👍",
+                labelRight: "มือขวา (โป้ง)"
+            },
+            {
+                level: 9,
+                title: "ด่านที่ 9: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ - 5 คะแนน)",
+                desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 5 คะแนน",
+                targetScore: 5,
+                timeLimit: 20,
+                emojiLeft: "👌",
+                labelLeft: "มือซ้าย (จีบ)",
+                emojiRight: "👆",
+                labelRight: "มือขวา (ตัว L)"
+            },
+            {
+                level: 10,
+                title: "ด่านที่ 10: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ - 10 คะแนน)",
+                desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 10 คะแนน",
                 targetScore: 10,
-                timeLimit: 30,
+                timeLimit: 20,
                 emojiLeft: "👌",
                 labelLeft: "มือซ้าย (จีบ)",
                 emojiRight: "👆",
@@ -614,11 +636,7 @@
         let isBGMPlaying = false; 
         let cameraInitialized = false;
 
-        // invertHandDetection = false คือค่าเริ่มต้นที่ "ถูกต้องแล้ว" สำหรับกล้องหน้าส่วนใหญ่
-        // (ระบบกลับด้าน label ให้ตรงกับมือจริงให้อัตโนมัติอยู่แล้วในฟังก์ชัน getRealHand)
-        // ผู้เล่นกดปุ่มสลับได้เผื่อกล้อง/อุปกรณ์บางรุ่นยังตรวจผิดฝั่งอยู่
         let invertHandDetection = false;
-        
         let lastScoreTime = 0;
 
         let tapSeqStep = 0;           
@@ -659,9 +677,6 @@
             alert(statusMsg);
         }
 
-        // แปลง label ดิบจาก MediaPipe ("Right"/"Left") ให้เป็นมือจริงตามที่ผู้เล่นยกจริง
-        // ค่าเริ่มต้นจะกลับด้านให้อัตโนมัติ เพราะ MediaPipe คำนวณ handedness
-        // โดยสมมติว่าภาพถูกมิเรอร์ไว้แล้ว แต่ภาพจากกล้องเว็บที่ส่งเข้าโมเดลไม่ได้ถูกมิเรอร์จริง
         function getRealHand(rawLabel) {
             const baseHand = (rawLabel === "Left") ? "Right" : "Left";
             if (!invertHandDetection) return baseHand;
@@ -680,7 +695,6 @@
 
         function goToStartScreen() {
             if (gameActive) {
-                // บันทึกความคืบหน้าไว้ที่ด่านปัจจุบัน เผื่อกลับมาเล่นต่อภายหลัง
                 saveProgress();
                 if (totalScore > 0) {
                     saveScore(playerName, totalScore);
@@ -702,7 +716,7 @@
 
         function initGameSession() {
             startBGM();
-            clearProgress(); // เริ่มใหม่ตั้งแต่ด่าน 1 เสมอ ล้างข้อมูลค้างไว้เก่าทิ้ง
+            clearProgress(); 
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
             currentLevelIdx = 0;
             totalScore = 0;
@@ -724,7 +738,7 @@
         function showLevelInstruction(levelIdx) {
             const lvl = LEVELS[levelIdx];
 
-            document.getElementById('instLevelTitle').innerText = `คำอธิบายด่านที่ ${lvl.level}/7`;
+            document.getElementById('instLevelTitle').innerText = `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
             document.getElementById('instLevelDesc').innerText = lvl.desc;
             document.getElementById('instTargetScore').innerText = lvl.targetScore;
             document.getElementById('instTimeLimit').innerText = lvl.timeLimit;
@@ -749,7 +763,7 @@
             holdStartTime = null;
             lastScoreTime = 0;
 
-            document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/7`;
+            document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
             document.getElementById('gameEmojiLeft').innerHTML = lvl.emojiLeft;
             document.getElementById('gameLabelLeft').innerText = lvl.labelLeft;
             document.getElementById('gameEmojiRight').innerHTML = lvl.emojiRight;
@@ -844,7 +858,7 @@
         function proceedToNextLevelInstruction() {
             if (currentLevelIdx < LEVELS.length - 1) {
                 currentLevelIdx++;
-                saveProgress(); // บันทึกความคืบหน้าไว้ที่ด่านใหม่นี้ทันที
+                saveProgress(); 
                 showLevelInstruction(currentLevelIdx);
             } else {
                 endGame(true);
@@ -866,10 +880,10 @@
             
             if (completedAll) {
                 sndCorrect.play();
-                clearProgress(); // จบเกมครบทุกด่านแล้ว ล้างข้อมูลค้างไว้
+                clearProgress(); 
             } else {
                 sndWrong.play(); 
-                saveProgress(); // ยังไม่ผ่านด่านนี้ บันทึกไว้เผื่อกลับมาเล่นต่อที่ด่านนี้
+                saveProgress(); 
             }
             
             if (totalScore > 0) { 
@@ -886,7 +900,7 @@
             const resTitle = document.getElementById('resTitle');
             if (completedAll) {
                 resTitle.innerText = "พิชิตครบทุกด่าน! 🎉🏆";
-                document.getElementById('resFeedback').innerText = "สุดยอดอัจฉริยะมากค่ะ! ผ่านครบทั้ง 7 ด่าน สมองแข็งแรงและว่องไวมากๆ เลยค่ะ!";
+                document.getElementById('resFeedback').innerText = `สุดยอดอัจฉริยะมากค่ะ! ผ่านครบทั้ง ${LEVELS.length} ด่าน สมองแข็งแรงและว่องไวมากๆ เลยค่ะ!`;
                 retryBtn.style.display = "none";
             } else {
                 resTitle.innerText = "หมดเวลา! ⏰";
@@ -896,7 +910,6 @@
             }
         }
 
-        // ===================== ระบบบันทึก/โหลดความคืบหน้า (เล่นต่อจากด่านค้าง) =====================
         function saveProgress() {
             try {
                 const progress = {
@@ -929,7 +942,7 @@
             if (progress && typeof progress.levelIdx === 'number' && progress.levelIdx >= 0 && progress.levelIdx < LEVELS.length) {
                 resumeBtn.style.display = "inline-flex";
                 resumeInfo.style.display = "block";
-                resumeInfo.innerText = `📌 พบข้อมูลค้างไว้: คุณ "${progress.name}" เล่นถึงด่านที่ ${progress.levelIdx + 1}/7 (คะแนนสะสม ${progress.totalScore} ⭐)`;
+                resumeInfo.innerText = `📌 พบข้อมูลค้างไว้: คุณ "${progress.name}" เล่นถึงด่านที่ ${progress.levelIdx + 1}/${LEVELS.length} (คะแนนสะสม ${progress.totalScore} ⭐)`;
 
                 const nameInput = document.getElementById('playerName');
                 if (!nameInput.value) {
@@ -1030,7 +1043,7 @@
 
             canvasCtx.save();
             canvasCtx.translate(wx, wy);
-            canvasCtx.scale(-1, 1); // สลับกลับเพื่อให้ข้อความอ่านได้ปกติบน Canvas ที่ติด scaleX(-1)
+            canvasCtx.scale(-1, 1); 
 
             canvasCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
             canvasCtx.beginPath();
@@ -1087,11 +1100,10 @@
                     let detectedHandLabel = "";
 
                     for (let i = 0; i < results.multiHandedness.length; i++) {
-                        let rawLabel = results.multiHandedness[i].label; // MediaPipe: "Right"/"Left" (label ดิบ ยังไม่ผ่านการแก้ไขทิศทาง)
+                        let rawLabel = results.multiHandedness[i].label; 
                         let realPhysicalHand = getRealHand(rawLabel);
                         detectedHandLabel = realPhysicalHand === "Right" ? "มือขวา" : "มือซ้าย";
 
-                        // วาดป้ายชื่อมือลอยตรงข้อมือบน Canvas
                         const lm = results.multiHandLandmarks[i];
                         drawHandLabelOnCanvas(lm, realPhysicalHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", realPhysicalHand === "Right");
 
@@ -1212,8 +1224,155 @@
                     }
                 }
 
-                // ==================== ด่าน 7 (สองมือ จีบ-แอล สลับฝั่ง) ====================
+                // ==================== ด่าน 7 (สองมือแตะนิ้วพร้อมกัน ชี้➔กลาง➜นาง➜ก้อย) ====================
                 else if (currentLevelIdx === 6) {
+                    if (results.multiHandLandmarks.length >= 2) {
+                        let leftLM = null, rightLM = null;
+                        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+                            const lm = results.multiHandLandmarks[i];
+                            let rawLabel = results.multiHandedness[i].label; 
+                            let realHand = getRealHand(rawLabel);
+
+                            drawHandLabelOnCanvas(lm, realHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", realHand === "Right");
+
+                            if (realHand === "Left") leftLM = lm;
+                            if (realHand === "Right") rightLM = lm;
+                        }
+
+                        if (leftLM && rightLM) {
+                            const thresh = 0.065;
+                            const lTouchIndex  = getDistance(leftLM[4], leftLM[8]) < thresh;
+                            const lTouchMiddle = getDistance(leftLM[4], leftLM[12]) < thresh;
+                            const lTouchRing   = getDistance(leftLM[4], leftLM[16]) < thresh;
+                            const lTouchPinky  = getDistance(leftLM[4], leftLM[20]) < thresh;
+
+                            const rTouchIndex  = getDistance(rightLM[4], rightLM[8]) < thresh;
+                            const rTouchMiddle = getDistance(rightLM[4], rightLM[12]) < thresh;
+                            const rTouchRing   = getDistance(rightLM[4], rightLM[16]) < thresh;
+                            const rTouchPinky  = getDistance(rightLM[4], rightLM[20]) < thresh;
+
+                            if (tapSeqStep === 0) {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 มือสองข้าง: นำนิ้วโป้งแตะ 'นิ้วชี้' พร้อมกัน";
+                                    document.getElementById('feedbackText').style.color = "#d35400";
+                                }
+                                if (lTouchIndex && rTouchIndex) tapSeqStep = 1;
+                            } else if (tapSeqStep === 1) {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 ดีมาก! ต่อไปแตะ 'นิ้วกลาง' พร้อมกันสองข้าง";
+                                    document.getElementById('feedbackText').style.color = "#e67e22";
+                                }
+                                if (lTouchMiddle && rTouchMiddle) tapSeqStep = 2;
+                            } else if (tapSeqStep === 2) {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 เก่งมาก! ต่อไปแตะ 'นิ้วนาง' พร้อมกันสองข้าง";
+                                    document.getElementById('feedbackText').style.color = "#e67e22";
+                                }
+                                if (lTouchRing && rTouchRing) tapSeqStep = 3;
+                            } else if (tapSeqStep === 3) {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 อีกนิดเดียว! แตะ 'นิ้วก้อย' พร้อมกันสองข้าง";
+                                    document.getElementById('feedbackText').style.color = "#2980b9";
+                                }
+                                if (lTouchPinky && rTouchPinky) {
+                                    tapSeqStep = 0;
+                                    addPoint();
+                                }
+                            }
+                        } else {
+                            if (!isJustScored) {
+                                document.getElementById('feedbackText').innerText = "⚠️ ต้องใช้มือซ้ายและมือขวาพร้อมกัน";
+                                document.getElementById('feedbackText').style.color = "#c0392b";
+                            }
+                        }
+                    } else {
+                        if (!isJustScored) {
+                            document.getElementById('feedbackText').innerText = "⚠️ กรุณายกมือขึ้นมาทั้ง 2 ข้าง";
+                            document.getElementById('feedbackText').style.color = "#c0392b";
+                        }
+                    }
+                }
+
+                // ==================== ด่าน 8 (มือสองข้าง ขวาชูโป้ง ซ้ายชูก้อย สลับกัน) ====================
+                else if (currentLevelIdx === 7) {
+                    if (results.multiHandLandmarks.length >= 2) {
+                        let leftLM = null, rightLM = null;
+                        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+                            const lm = results.multiHandLandmarks[i];
+                            let rawLabel = results.multiHandedness[i].label; 
+                            let realHand = getRealHand(rawLabel);
+
+                            drawHandLabelOnCanvas(lm, realHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", realHand === "Right");
+
+                            if (realHand === "Left") leftLM = lm;
+                            if (realHand === "Right") rightLM = lm;
+                        }
+
+                        if (leftLM && rightLM) {
+                            const lThumbDist = getDistance(leftLM[4], leftLM[5]);
+                            const lIndexExt  = isFingerExtended(leftLM, 8, 6);
+                            const lMiddleExt = isFingerExtended(leftLM, 12, 10);
+                            const lRingExt   = isFingerExtended(leftLM, 16, 14);
+                            const lPinkyExt  = isFingerExtended(leftLM, 20, 18);
+                            const lIsThumb = (lThumbDist > 0.11) && !lIndexExt && !lMiddleExt && !lRingExt && !lPinkyExt;
+                            const lIsPinky = lPinkyExt && !lIndexExt && !lMiddleExt && !lRingExt;
+
+                            const rThumbDist = getDistance(rightLM[4], rightLM[5]);
+                            const rIndexExt  = isFingerExtended(rightLM, 8, 6);
+                            const rMiddleExt = isFingerExtended(rightLM, 12, 10);
+                            const rRingExt   = isFingerExtended(rightLM, 16, 14);
+                            const rPinkyExt  = isFingerExtended(rightLM, 20, 18);
+                            const rIsThumb = (rThumbDist > 0.11) && !rIndexExt && !rMiddleExt && !rRingExt && !rPinkyExt;
+                            const rIsPinky = rPinkyExt && !rIndexExt && !rMiddleExt && !rRingExt;
+
+                            const isStateA = (rIsThumb && lIsPinky); // ขวาโป้ง ซ้ายก้อย
+                            const isStateB = (rIsPinky && lIsThumb); // ขวาก้อย ซ้ายโป้ง
+
+                            if (toggleSubState === "StateA") {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 ดีมาก! ตอนนี้สลับเป็น 'ขวาชูก้อย - ซ้ายชูโป้ง'";
+                                    document.getElementById('feedbackText').style.color = "#2980b9";
+                                }
+                                if (isStateB) {
+                                    toggleSubState = null;
+                                    addPoint();
+                                }
+                            } else if (toggleSubState === "StateB") {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 ดีมาก! ตอนนี้สลับเป็น 'ขวาชูโป้ง - ซ้ายชูก้อย'";
+                                    document.getElementById('feedbackText').style.color = "#2980b9";
+                                }
+                                if (isStateA) {
+                                    toggleSubState = null;
+                                    addPoint();
+                                }
+                            } else {
+                                if (!isJustScored) {
+                                    document.getElementById('feedbackText').innerText = "👉 ตั้งท่า: ขวาชูโป้ง-ซ้ายชูก้อย (หรือ ขวาก้อย-ซ้ายโป้ง)";
+                                    document.getElementById('feedbackText').style.color = "#d35400";
+                                }
+                                if (isStateA) {
+                                    toggleSubState = "StateA";
+                                } else if (isStateB) {
+                                    toggleSubState = "StateB";
+                                }
+                            }
+                        } else {
+                            if (!isJustScored) {
+                                document.getElementById('feedbackText').innerText = "⚠️ ต้องใช้มือซ้ายและมือขวาพร้อมกัน";
+                                document.getElementById('feedbackText').style.color = "#c0392b";
+                            }
+                        }
+                    } else {
+                        if (!isJustScored) {
+                            document.getElementById('feedbackText').innerText = "⚠️ กรุณายกมือขึ้นมาทั้ง 2 ข้าง";
+                            document.getElementById('feedbackText').style.color = "#c0392b";
+                        }
+                    }
+                }
+
+                // ==================== ด่าน 9 และ 10 (สองมือ จีบ-แอล สลับฝั่ง) ====================
+                else if (currentLevelIdx === 8 || currentLevelIdx === 9) {
                     if (results.multiHandLandmarks.length >= 2) {
                         let leftHandGest = "None";
                         let rightHandGest = "None";
