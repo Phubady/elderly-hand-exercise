@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>จับ จีบ จุ้ม ขยุ้มหัวใจ - ตะลุย 7 ด่าน</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     
@@ -75,6 +75,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .level-badge {
@@ -91,6 +93,8 @@
             display: flex;
             gap: 6px;
             align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
         .action-btns-group button {
             padding: 6px 12px;
@@ -272,6 +276,18 @@
             margin-bottom: 6px;
         }
 
+        .resume-box {
+            display: none;
+            background: #fffdf0;
+            border: 2px solid #f39c12;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            text-align: left;
+            font-size: 16px;
+            color: #5a3d31;
+        }
+
         /* ตกแต่ง SVG อีโมจินิ้วก้อย ให้เป็นสไตล์ 3D Glossy เหมือนกับระบบ */
         .pinky-emoji-styled {
             width: 1em;
@@ -279,6 +295,56 @@
             display: inline-block;
             vertical-align: -0.1em;
             filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2));
+        }
+
+        /* ===================== ปรับให้เหมาะกับมือถือจอแนวตั้ง ===================== */
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .screen { padding: 12px; border-width: 3px; border-radius: 14px; }
+            h1 { font-size: 22px; }
+            h2 { font-size: 17px; }
+
+            button { font-size: 16px; padding: 9px 16px; margin: 4px; }
+            .btn-gray { font-size: 14px; padding: 6px 12px; }
+            .btn-yellow { font-size: 14px; }
+
+            input[type="text"] { font-size: 16px; padding: 8px; width: 90%; }
+
+            .info-bar { margin-bottom: 8px; }
+            .action-btns-group { width: 100%; justify-content: center; }
+            .action-btns-group button {
+                flex: 1 1 auto;
+                font-size: 12px;
+                padding: 6px 8px;
+                height: 34px;
+                white-space: nowrap;
+            }
+            .level-badge { font-size: 14px; padding: 3px 10px; }
+
+            .example-box { padding: 8px; margin-bottom: 10px; }
+            .example-title { font-size: 15px; margin-bottom: 4px; }
+            .emoji-card .emoji { font-size: 36px; height: 40px; }
+            .emoji-card .label { font-size: 12px; }
+            .emoji-divider { height: 42px; }
+
+            .feedback { font-size: 15px; padding: 5px 10px; min-height: 26px; }
+
+            .timer-hud, .score-hud { font-size: 14px; padding: 4px 10px; border-width: 2px; }
+
+            .instruction-box { font-size: 15px; padding: 10px 14px; }
+            .instruction-box li { margin-bottom: 4px; }
+
+            .leaderboard { padding: 10px; }
+            .leaderboard h3 { font-size: 16px; }
+            .score-item { font-size: 15px; }
+
+            .resume-box { font-size: 14px; padding: 8px 10px; }
+        }
+
+        @media (max-width: 360px) {
+            h1 { font-size: 19px; }
+            button { font-size: 14px; padding: 8px 12px; }
+            .action-btns-group button { font-size: 11px; padding: 5px 6px; height: 30px; }
         }
     </style>
 </head>
@@ -332,7 +398,11 @@
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
         <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
         <br>
-        <button class="btn-green" onclick="initGameSession()">เริ่มเกมตะลุย 7 ด่าน ➔</button>
+
+        <div id="resumeInfo" class="resume-box"></div>
+        <button class="btn-blue" id="resumeBtn" style="display:none;" onclick="resumeGameSession()">▶ เล่นต่อจากด่านที่ค้างไว้</button>
+        <br>
+        <button class="btn-green" onclick="initGameSession()">เริ่มเกมใหม่ตั้งแต่ด่าน 1 ➔</button>
         
         <div class="leaderboard">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -382,7 +452,7 @@
         <div class="info-bar">
             <div id="levelBadge" class="level-badge">ด่านที่ 1/7</div>
             <div class="action-btns-group">
-                <button class="btn-blue" onclick="toggleHandSwap()" title="กดหากระบบตรวจสลับมือกัน">🔄 สลับซ้าย-ขวา</button>
+                <button class="btn-blue" onclick="toggleHandSwap()" title="กดหากระบบตรวจสลับมือกัน">🔄 มือแสดงผิดฝั่ง?</button>
                 <button class="btn-yellow" id="pauseBtn" onclick="togglePause()">⏸️ พัก</button>
                 <button class="btn-red" id="backBtn" onclick="goToStartScreen()" title="กลับหน้าหลัก">✖</button>
             </div>
@@ -443,7 +513,9 @@
         <h1 style="font-size: 55px; color: #e74c3c; margin: 10px 0;"><span id="resScore"></span> ⭐</h1>
         <p id="resFeedback"></p>
         
-        <button class="btn-blue" onclick="initGameSession()">เริ่มเล่นใหม่ตั้งแต่ด่าน 1</button>
+        <button class="btn-blue" id="resRetryBtn" onclick="retryCurrentLevel()">เล่นต่อจากด่านนี้อีกครั้ง 🔄</button>
+        <br>
+        <button class="btn-green" onclick="initGameSession()">เริ่มเล่นใหม่ตั้งแต่ด่าน 1</button>
         <br>
         <button class="btn-gray" onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
     </div>
@@ -541,7 +613,11 @@
         let timerInterval;
         let isBGMPlaying = false; 
         let cameraInitialized = false;
-        let invertHandDetection = false; // ตัวแปรสำหรับสลับซ้าย-ขวาฉุกเฉิน
+
+        // invertHandDetection = false คือค่าเริ่มต้นที่ "ถูกต้องแล้ว" สำหรับกล้องหน้าส่วนใหญ่
+        // (ระบบกลับด้าน label ให้ตรงกับมือจริงให้อัตโนมัติอยู่แล้วในฟังก์ชัน getRealHand)
+        // ผู้เล่นกดปุ่มสลับได้เผื่อกล้อง/อุปกรณ์บางรุ่นยังตรวจผิดฝั่งอยู่
+        let invertHandDetection = false;
         
         let lastScoreTime = 0;
 
@@ -564,7 +640,10 @@
         const sndWrong = document.getElementById('snd-wrong');
         const correctOverlay = document.getElementById('correctOverlay');
 
-        window.onload = function() { displayLeaderboard(); };
+        window.onload = function() {
+            displayLeaderboard();
+            checkResumeAvailable();
+        };
 
         function startBGM() {
             if (!isBGMPlaying) {
@@ -576,8 +655,17 @@
 
         function toggleHandSwap() {
             invertHandDetection = !invertHandDetection;
-            const statusMsg = invertHandDetection ? "🔄 สลับโหมดมือเรียบร้อย!" : "🔄 กลับสู่โหมดมือปกติเรียบร้อย!";
+            const statusMsg = invertHandDetection ? "🔄 สลับโหมดมือเรียบร้อย!" : "🔄 กลับสู่โหมดมือปกติ (ค่าเริ่มต้น) เรียบร้อย!";
             alert(statusMsg);
+        }
+
+        // แปลง label ดิบจาก MediaPipe ("Right"/"Left") ให้เป็นมือจริงตามที่ผู้เล่นยกจริง
+        // ค่าเริ่มต้นจะกลับด้านให้อัตโนมัติ เพราะ MediaPipe คำนวณ handedness
+        // โดยสมมติว่าภาพถูกมิเรอร์ไว้แล้ว แต่ภาพจากกล้องเว็บที่ส่งเข้าโมเดลไม่ได้ถูกมิเรอร์จริง
+        function getRealHand(rawLabel) {
+            const baseHand = (rawLabel === "Left") ? "Right" : "Left";
+            if (!invertHandDetection) return baseHand;
+            return (baseHand === "Left") ? "Right" : "Left";
         }
 
         function showScreen(targetScreen) {
@@ -591,8 +679,12 @@
         }
 
         function goToStartScreen() {
-            if (gameActive && totalScore > 0) {
-                saveScore(playerName, totalScore);
+            if (gameActive) {
+                // บันทึกความคืบหน้าไว้ที่ด่านปัจจุบัน เผื่อกลับมาเล่นต่อภายหลัง
+                saveProgress();
+                if (totalScore > 0) {
+                    saveScore(playerName, totalScore);
+                }
             }
 
             gameActive = false;
@@ -605,14 +697,27 @@
             
             showScreen(startScreen);
             displayLeaderboard();
+            checkResumeAvailable();
         }
 
         function initGameSession() {
             startBGM();
+            clearProgress(); // เริ่มใหม่ตั้งแต่ด่าน 1 เสมอ ล้างข้อมูลค้างไว้เก่าทิ้ง
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
             currentLevelIdx = 0;
             totalScore = 0;
             
+            showLevelInstruction(currentLevelIdx);
+        }
+
+        function resumeGameSession() {
+            const progress = loadProgress();
+            if (!progress) return;
+            startBGM();
+            playerName = document.getElementById('playerName').value.trim() || progress.name || "ผู้เล่นนิรนาม";
+            currentLevelIdx = progress.levelIdx;
+            totalScore = progress.totalScore;
+
             showLevelInstruction(currentLevelIdx);
         }
 
@@ -739,6 +844,7 @@
         function proceedToNextLevelInstruction() {
             if (currentLevelIdx < LEVELS.length - 1) {
                 currentLevelIdx++;
+                saveProgress(); // บันทึกความคืบหน้าไว้ที่ด่านใหม่นี้ทันที
                 showLevelInstruction(currentLevelIdx);
             } else {
                 endGame(true);
@@ -760,8 +866,10 @@
             
             if (completedAll) {
                 sndCorrect.play();
+                clearProgress(); // จบเกมครบทุกด่านแล้ว ล้างข้อมูลค้างไว้
             } else {
                 sndWrong.play(); 
+                saveProgress(); // ยังไม่ผ่านด่านนี้ บันทึกไว้เผื่อกลับมาเล่นต่อที่ด่านนี้
             }
             
             if (totalScore > 0) { 
@@ -772,14 +880,64 @@
             
             document.getElementById('resName').innerText = playerName;
             document.getElementById('resScore').innerText = totalScore;
+
+            const retryBtn = document.getElementById('resRetryBtn');
             
             const resTitle = document.getElementById('resTitle');
             if (completedAll) {
                 resTitle.innerText = "พิชิตครบทุกด่าน! 🎉🏆";
                 document.getElementById('resFeedback').innerText = "สุดยอดอัจฉริยะมากค่ะ! ผ่านครบทั้ง 7 ด่าน สมองแข็งแรงและว่องไวมากๆ เลยค่ะ!";
+                retryBtn.style.display = "none";
             } else {
                 resTitle.innerText = "หมดเวลา! ⏰";
                 document.getElementById('resFeedback').innerText = `ทำได้ดีมากค่ะ! ผ่านถึงด่านที่ ${currentLevelIdx + 1} ได้คะแนนสะสมรวม ${totalScore} คะแนน ลองฝึกอีกครั้งนะคะ!`;
+                retryBtn.style.display = "inline-flex";
+                retryBtn.innerText = `เล่นต่อด่านที่ ${currentLevelIdx + 1} อีกครั้ง 🔄`;
+            }
+        }
+
+        // ===================== ระบบบันทึก/โหลดความคืบหน้า (เล่นต่อจากด่านค้าง) =====================
+        function saveProgress() {
+            try {
+                const progress = {
+                    name: playerName,
+                    levelIdx: currentLevelIdx,
+                    totalScore: totalScore,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('gameProgressData', JSON.stringify(progress));
+            } catch (e) { console.log(e); }
+        }
+
+        function loadProgress() {
+            try {
+                const raw = localStorage.getItem('gameProgressData');
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (e) { return null; }
+        }
+
+        function clearProgress() {
+            localStorage.removeItem('gameProgressData');
+        }
+
+        function checkResumeAvailable() {
+            const progress = loadProgress();
+            const resumeBtn = document.getElementById('resumeBtn');
+            const resumeInfo = document.getElementById('resumeInfo');
+
+            if (progress && typeof progress.levelIdx === 'number' && progress.levelIdx >= 0 && progress.levelIdx < LEVELS.length) {
+                resumeBtn.style.display = "inline-flex";
+                resumeInfo.style.display = "block";
+                resumeInfo.innerText = `📌 พบข้อมูลค้างไว้: คุณ "${progress.name}" เล่นถึงด่านที่ ${progress.levelIdx + 1}/7 (คะแนนสะสม ${progress.totalScore} ⭐)`;
+
+                const nameInput = document.getElementById('playerName');
+                if (!nameInput.value) {
+                    nameInput.value = progress.name;
+                }
+            } else {
+                resumeBtn.style.display = "none";
+                resumeInfo.style.display = "none";
             }
         }
 
@@ -929,8 +1087,8 @@
                     let detectedHandLabel = "";
 
                     for (let i = 0; i < results.multiHandedness.length; i++) {
-                        let rawLabel = results.multiHandedness[i].label; // MediaPipe: "Right" = มือขวาจริง, "Left" = มือซ้ายจริง
-                        let realPhysicalHand = invertHandDetection ? (rawLabel === "Left" ? "Right" : "Left") : rawLabel;
+                        let rawLabel = results.multiHandedness[i].label; // MediaPipe: "Right"/"Left" (label ดิบ ยังไม่ผ่านการแก้ไขทิศทาง)
+                        let realPhysicalHand = getRealHand(rawLabel);
                         detectedHandLabel = realPhysicalHand === "Right" ? "มือขวา" : "มือซ้าย";
 
                         // วาดป้ายชื่อมือลอยตรงข้อมือบน Canvas
@@ -1063,7 +1221,7 @@
                         for (let i = 0; i < results.multiHandLandmarks.length; i++) {
                             const landmarks = results.multiHandLandmarks[i];
                             let rawLabel = results.multiHandedness[i].label; 
-                            let realHand = invertHandDetection ? (rawLabel === "Left" ? "Right" : "Left") : rawLabel;
+                            let realHand = getRealHand(rawLabel);
 
                             drawHandLabelOnCanvas(landmarks, realHand === "Right" ? "✋ มือขวา" : "🤚 มือซ้าย", realHand === "Right");
 
