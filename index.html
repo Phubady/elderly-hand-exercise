@@ -152,7 +152,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 52px;
+		height: auto !important; /* บังคับให้ความสูงยืดตามเนื้อหาด้านใน */
+    		min-height: 80px; /* กำหนดความสูงขั้นต่ำไว้เผื่อรูปโหลดไม่ขึ้น */
+    		padding: 15px 10px; /* เพิ่มพื้นที่ว่างด้านในกรอบ (บน-ล่าง 15px, ซ้าย-ขวา 10px) */
         }
         .emoji-card .label {
             font-size: 15px;
@@ -166,6 +168,15 @@
             background-color: #ffb6c1;
             border-radius: 2px;
         }
+
+	/* ควบคุมขนาดรูปภาพในช่องตัวอย่างท่าทาง */
+	.emoji-card img {
+    		max-width: 200px; /* ปรับขนาดความกว้างตามต้องการ */
+    		max-height: 100px; /* ปรับขนาดความสูงตามต้องการ */
+    		object-fit: contain;
+    		display: block;
+    		margin: 0 auto;
+	}
 
         .game-container { 
             position: relative; 
@@ -337,6 +348,10 @@
             .score-item { font-size: 15px; }
 
             .resume-box { font-size: 14px; padding: 8px 10px; }
+
+		.emoji-card img {
+                max-width: 200px; 
+                max-height: 200px;
         }
 
         @media (max-width: 360px) {
@@ -383,7 +398,7 @@
 
     <!-- หน้าแรก -->
     <div id="start-screen" class="screen active-screen">
-        <h1>ม่วนมือ ❤️</h1>
+        <h1>ม่วนมือ❤️</h1>
         <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
         <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
         <br>
@@ -519,9 +534,9 @@
                 desc: "ใช้ 'มือขวา' นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "✋",
+                emojiLeft: "<img src='Rt_hand.png' alt='มือขวา'>",
                 labelLeft: "มือขวาจริง",
-                emojiRight: "👌",
+                emojiRight: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
                 labelRight: "ชี้➜กลาง➜นาง➜ก้อย"
             },
             {
@@ -530,9 +545,9 @@
                 desc: "ใช้ 'มือซ้าย' นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👌",
+                emojiLeft: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
                 labelLeft: "ชี้➜กลาง➜นาง➜ก้อย",
-                emojiRight: "🤚",
+                emojiRight: "<img src='Lt-hand.png' alt='มือซ้าย'>",
                 labelRight: "มือซ้ายจริง"
             },
             {
@@ -541,9 +556,9 @@
                 desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง แล้วสลับไป ชูนิ้วก้อย นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👍",
+                emojiLeft: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
                 labelLeft: "1. ชูโป้ง",
-                emojiRight: PINKY_EMOJI_HTML,
+                emojiRight: "<img src='5th-rt-hand.png' alt='ชูก้อย'>",
                 labelRight: "2. สลับชูก้อย"
             },
             {
@@ -552,9 +567,9 @@
                 desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง แล้วสลับไป ชูนิ้วก้อย นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👍",
+                emojiLeft: "<img src='1st-lt-hand.png' alt='ชูโป้ง'>",
                 labelLeft: "1. ชูโป้ง",
-                emojiRight: PINKY_EMOJI_HTML,
+                emojiRight: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
                 labelRight: "2. สลับชูก้อย"
             },
             {
@@ -563,9 +578,10 @@
                 desc: "ใช้ 'มือขวา' ทำท่าจีบ สลับกับ ท่าตัวแอล (L) นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👌",
+                emojiLeft: "<img src='ok-rt-hand.png' alt='จีบ'>",
                 labelLeft: "จีบ",
-                emojiRight: "👆",
+                emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
+
                 labelRight: "ตัว L"
             },
             {
@@ -574,9 +590,9 @@
                 desc: "ใช้ 'มือซ้าย' ทำท่าจีบ สลับกับ ท่าตัวแอล (L) นับเป็น 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👌",
+                emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
                 labelLeft: "จีบ",
-                emojiRight: "👆",
+                emojiRight: "<img src='L-lt-hand.png' alt='แอล'>",
                 labelRight: "ตัว L"
             },
             {
@@ -585,9 +601,9 @@
                 desc: "ใช้มือสองข้าง นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ ทำทั้งสองข้างพร้อมกัน 1 ครั้งได้ 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👌",
+                emojiLeft: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
                 labelLeft: "มือซ้าย",
-                emojiRight: "👌",
+                emojiRight: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
                 labelRight: "มือขวา"
             },
             {
@@ -596,9 +612,9 @@
                 desc: "ใช้มือสองข้าง ขวาชูนิ้วโป้ง ซ้ายชูนิ้วก้อย แล้วสลับฝั่งกัน 1 ครั้งได้ 1 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: PINKY_EMOJI_HTML,
+                emojiLeft: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
                 labelLeft: "มือซ้าย (ก้อย)",
-                emojiRight: "👍",
+                emojiRight: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
                 labelRight: "มือขวา (โป้ง)"
             },
             {
@@ -607,9 +623,9 @@
                 desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 5 คะแนน",
                 targetScore: 5,
                 timeLimit: 20,
-                emojiLeft: "👌",
+                emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
                 labelLeft: "มือซ้าย (จีบ)",
-                emojiRight: "👆",
+                emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
                 labelRight: "มือขวา (ตัว L)"
             },
             {
@@ -618,9 +634,9 @@
                 desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 10 คะแนน",
                 targetScore: 10,
                 timeLimit: 20,
-                emojiLeft: "👌",
+                emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
                 labelLeft: "มือซ้าย (จีบ)",
-                emojiRight: "👆",
+                emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
                 labelRight: "มือขวา (ตัว L)"
             }
         ];
